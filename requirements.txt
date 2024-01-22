@@ -1,4 +1,4 @@
 django
 djangorestframework
-request
+requests
 django-cors-headers
