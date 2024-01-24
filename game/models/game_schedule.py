@@ -6,9 +6,9 @@ from game.models.game_draw_type import GameDrawType
 class GameSchedule(models.Model):
   """Model definition for GameSchedule."""
 
-  gameDrawTypeId = models.ForeignKey(GameDrawType, verbose_name=("GameDrawType"), on_delete=models.CASCADE)
-  companyGameId = models.ForeignKey(CompanyGame, verbose_name=("CompanyGameId"), on_delete=models.CASCADE)
-  drawResultId = models.ForeignKey('game.DrawResult', verbose_name=("DrawResultId"), on_delete=models.CASCADE)
+  gameDrawType = models.ForeignKey(GameDrawType, verbose_name=("GameDrawType"), on_delete=models.CASCADE)
+  companyGame = models.ForeignKey(CompanyGame, verbose_name=("CompanyGame"), on_delete=models.CASCADE)
+  drawResult = models.ForeignKey('game.DrawResult', verbose_name=("DrawResult"), on_delete=models.CASCADE)
   date = models.DateField()
   isDeleted= models.BooleanField(default=False)
 

@@ -8,7 +8,7 @@ class CompanyGame(models.Model):
         return {"min_bet": 25}
     
     companyId = models.CharField(max_length=40)
-    gameId = models.ForeignKey(Game, verbose_name=("GameId"), on_delete=models.CASCADE)
+    game = models.ForeignKey(Game, verbose_name=("Game"), on_delete=models.CASCADE)
     gameSettings = models.JSONField("GameSettings", default=game_settings_default)
     isDeleted= models.BooleanField(default=False)
 
