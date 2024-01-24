@@ -1,7 +1,8 @@
 from django.urls import path, include
-from game.api import CompanyGameViewSet
+from game.api import CompanyGameViewSet, DrawResultViewSet
 from rest_framework import routers
 
 
 router = routers.SimpleRouter()
 router.register(r'company-game', CompanyGameViewSet, basename='company-game')
+router.register(r'draw-result', DrawResultViewSet, basename='draw-result')
