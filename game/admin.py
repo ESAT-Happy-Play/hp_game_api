@@ -5,3 +5,7 @@ from game.models import *
 admin.site.register(CompanyGame)
 admin.site.register(DrawResult)
 admin.site.register(DrawResultWinner)
+admin.site.register(Game)
+admin.site.register(GameSchedule)
+admin.site.register(GameDrawType)
+admin.site.register(CloseDate)
