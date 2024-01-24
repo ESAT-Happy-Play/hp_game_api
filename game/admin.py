@@ -3,5 +3,5 @@ from game.models import *
 # Register your models here.
 
 admin.site.register(CompanyGame)
-admin.site.register(Company)
-admin.site.register(GameDrawType)
+admin.site.register(DrawResult)
+admin.site.register(DrawResultWinner)
