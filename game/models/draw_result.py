@@ -4,7 +4,7 @@ from game.models.game_schedule import GameSchedule
 class DrawResult(models.Model):
     """Model definition for DrawResult."""
 
-    gameScheduleId = models.ForeignKey(GameSchedule, verbose_name=("GameScheduleId"), on_delete=models.CASCADE)
+    gameSchedule = models.ForeignKey(GameSchedule, verbose_name=("GameSchedule"), on_delete=models.CASCADE)
     result = models.CharField(max_length=30)
     amount = models.FloatField()
     noOfWinners = models.IntegerField()
