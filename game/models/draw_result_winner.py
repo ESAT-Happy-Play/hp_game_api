@@ -6,7 +6,7 @@ class DrawResultWinner(models.Model):
 
     drawResultId = models.ForeignKey(DrawResult, verbose_name=("DrawResultId"), on_delete=models.CASCADE)
     accountInfoId = models.CharField(max_length=40)
-    amount = models.DecimalField()
+    amount = models.FloatField()
     betInfoId = models.CharField(max_length=40)
     isDeleted = models.BooleanField(default=False)
     

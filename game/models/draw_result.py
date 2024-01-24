@@ -6,7 +6,7 @@ class DrawResult(models.Model):
 
     gameScheduleId = models.ForeignKey(GameSchedule, verbose_name=("GameScheduleId"), on_delete=models.CASCADE)
     result = models.CharField(max_length=30)
-    amount = models.DecimalField()
+    amount = models.FloatField()
     noOfWinners = models.IntegerField()
     isDeleted = models.BooleanField(default=False)
     

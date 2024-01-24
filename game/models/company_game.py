@@ -1,5 +1,4 @@
 from django.db import models
-from game.models.company import Company
 # from game.models.game import Game
 
 class CompanyGame(models.Model):
@@ -8,7 +7,7 @@ class CompanyGame(models.Model):
     def game_settings_default():
         return {"min_bet": 25}
     
-    companyId = models.ForeignKey(Company ,verbose_name=("CompanyId"), on_delete=models.CASCADE)
+    companyId = models.CharField(max_length=40)
     # gameId = models.ForeignKey(Game, verbose_name=("GameId"), on_delete=models.CASCADE)
     gameSettings = models.JSONField("GameSettings", default=game_settings_default)
     isDeleted= models.BooleanField(default=False)
