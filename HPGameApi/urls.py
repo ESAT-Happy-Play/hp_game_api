@@ -22,21 +22,16 @@ from django.conf.urls.static import static
 from rest_framework_swagger.views import get_swagger_view
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
+from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
 from rest_framework import permissions
 from django.conf import settings
 
-schema_view = get_schema_view(
-  openapi.Info(
-    title="Happy Play Game API",
-    default_version='v1',),
-  public=True,
-  permission_classes=(permissions.AllowAny,),
-)
 
 urlpatterns = [
   path('admin/', admin.site.urls),
   path('', include(router.urls)),
-  path('swagger/', schema_view.with_ui('swagger', cache_timeout=0),name='schema-swagger-ui'),
+  path('schema/', SpectacularAPIView.as_view(),name='schema'),
+  path('swagger/', SpectacularSwaggerView.as_view(),name='schema-swagger-ui'),
 ]
 
 if settings.DEBUG:

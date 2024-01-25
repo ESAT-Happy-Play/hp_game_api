@@ -3,6 +3,8 @@ from django.shortcuts import get_object_or_404
 from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
+from drf_yasg.utils import swagger_auto_schema
+from game.models import CompanyGame
 
 class BaseViewSet(viewsets.ViewSet):
     """Allows basic operations like list, retrieve, delete, """
@@ -13,6 +15,8 @@ class BaseViewSet(viewsets.ViewSet):
     serializer_class = ()
     # To implement: JWT auth from the core identity service
     # permission_classes = [IsAuthenticated]
+
+
 
     def list(self, request):
         serializer = self.serializer_class(self.queryset, many=True)
