@@ -2,6 +2,7 @@ from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
 from rest_framework import viewsets, status
 from rest_framework.decorators import action
+from rest_framework.permissions import IsAuthenticated
 
 class BaseViewSet(viewsets.ViewSet):
     """Allows basic operations like list, retrieve, delete, """
@@ -10,11 +11,12 @@ class BaseViewSet(viewsets.ViewSet):
     """ - serializer_class              """
     queryset = ()
     serializer_class = ()
+    # To implement: JWT auth from the core identity service
+    # permission_classes = [IsAuthenticated]
 
     def list(self, request):
-        # serializer = CompanyGameSerializer(self.queryset, many=True)
         serializer = self.serializer_class(self.queryset, many=True)
-        return JsonResponse(serializer.data, status=status.HTTP_200_OK)
+        return JsonResponse(serializer.data, status=status.HTTP_200_OK, safe=False)
     
     def retrieve(self, request, pk=None):
         instance = get_object_or_404(self.queryset, pk=pk)
