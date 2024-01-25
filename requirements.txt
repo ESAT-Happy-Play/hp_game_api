@@ -5,6 +5,5 @@ django-cors-headers
 psycopg2
 
 django-rest-swagger
-drf-yasg
 drf-spectacular
 djangorestframework_simplejwt

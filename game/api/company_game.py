@@ -2,7 +2,6 @@ from game.serializers import CompanyGameSerializer
 from game.models import CompanyGame
 from .base_viewset import BaseViewSet
 from rest_framework import viewsets, status
-from drf_yasg.utils import swagger_auto_schema
 from django.http import JsonResponse
 
 class CompanyGameViewSet(BaseViewSet):
