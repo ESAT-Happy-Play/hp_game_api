@@ -4,4 +4,4 @@ from .base_viewset import BaseViewSet
 
 class DrawResultViewSet(BaseViewSet):
     queryset = DrawResult.objects.filter(isDeleted=False)
-    serializer_class = DrawResultSerializer()
+    serializer_class = DrawResultSerializer

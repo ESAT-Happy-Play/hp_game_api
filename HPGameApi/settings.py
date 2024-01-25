@@ -73,6 +73,18 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'HPGameApi.wsgi.application'
 
+REST_FRAMEWORK = {
+       "NON_FIELD_ERRORS_KEY": "errors",
+       "DEFAULT_AUTHENTICATION_CLASSES": (
+           'rest_framework_simplejwt.authentication.JWTAuthentication',
+       ),
+   }
+
+SIMPLEJWT = {
+      "SIGNING_KEY": SECRET_KEY,
+      "ISSUER": "core-identity.dev-esat.com",
+      "AUDIENCE": "https://localhost:8000" 
+}
 
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
