@@ -40,7 +40,7 @@ INSTALLED_APPS = [
     'game',
     'rest_framework_swagger',
     'rest_framework',
-    'drf_yasg',
+    'drf_spectacular',
 ]
 
 MIDDLEWARE = [
@@ -78,7 +78,12 @@ REST_FRAMEWORK = {
        "DEFAULT_AUTHENTICATION_CLASSES": (
            'rest_framework_simplejwt.authentication.JWTAuthentication',
        ),
+       "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema"
    }
+
+SPECTACULAR_SETTINGS = {
+    "TITLE": "Happy Play",
+}
 
 SIMPLEJWT = {
       "SIGNING_KEY": SECRET_KEY,

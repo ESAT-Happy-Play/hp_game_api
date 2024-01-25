@@ -14,6 +14,8 @@ class BaseViewSet(viewsets.ViewSet):
     # To implement: JWT auth from the core identity service
     # permission_classes = [IsAuthenticated]
 
+
+
     def list(self, request):
         serializer = self.serializer_class(self.queryset, many=True)
         return JsonResponse(serializer.data, status=status.HTTP_200_OK, safe=False)
