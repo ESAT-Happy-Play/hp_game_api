@@ -31,7 +31,7 @@ class BaseViewSet(viewsets.ViewSet):
         serializer.save()
         return JsonResponse(serializer.data, status=status.HTTP_201_CREATED)
 
-    @action(detail=True, methods=['put'])
+    @action(detail=True, methods=['delete'])
     def delete(self, request, pk=None):
         instance = get_object_or_404(self.queryset, pk=pk)
         instance.isDeleted = True
