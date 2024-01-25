@@ -36,7 +36,8 @@ class BaseViewSet(viewsets.ViewSet):
     def delete(self, request, pk=None):
         instance = get_object_or_404(self.queryset, pk=pk)
         instance.isDeleted = True
-        serializer = self.serializer_class(instance)
+        serializer = self.serializer_class(instance, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
         serializer.save()
         return JsonResponse(serializer.data)
     
