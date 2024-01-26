@@ -4,6 +4,7 @@ from .draw_result_winner import *
 from .game import *
 from .close_date import *
 from .game_draw_type import *
+from .bet_item import *
 from .game_schedule import *
 from .prize_pool import *
 from .bet_transaction import *
