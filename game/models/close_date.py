@@ -1,11 +1,12 @@
 from django.db import models
-from django.contrib.postgres.fields import ArrayField
+from game.models.game_draw_type import GameDrawType
 
 class CloseDate(models.Model):
   """Model definition for CloseDate."""
 
+  date = models.DateField()
   isWholeday = models.BooleanField(default=True)
-  closedDrawTypes = ArrayField(models.IntegerField(), default=list, blank=True)
+  closedDrawType = models.ForeignKey(GameDrawType, verbose_name=("GameDrawType"), null=True, on_delete=models.CASCADE)
   companyId = models.CharField(max_length=40)
   isDeleted= models.BooleanField(default=False)
 

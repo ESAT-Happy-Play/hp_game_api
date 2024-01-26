@@ -8,7 +8,6 @@ class GameSchedule(models.Model):
 
   gameDrawType = models.ForeignKey(GameDrawType, verbose_name=("GameDrawType"), on_delete=models.CASCADE)
   companyGame = models.ForeignKey(CompanyGame, verbose_name=("CompanyGame"), on_delete=models.CASCADE)
-  drawResult = models.ForeignKey('game.DrawResult', verbose_name=("DrawResult"), on_delete=models.CASCADE)
   date = models.DateField()
   isDeleted= models.BooleanField(default=False)
 
