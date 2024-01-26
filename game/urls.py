@@ -1,5 +1,5 @@
 from django.urls import path, include
-from game.api import CompanyGameViewSet, DrawResultViewSet, DrawResultWinnerViewSet, GameViewSet, CloseDateViewSet, GameDrawTypeViewSet
+from game.api import *
 from rest_framework import routers
 
 
@@ -10,3 +10,4 @@ router.register(r'draw-result-winner', DrawResultWinnerViewSet, basename='draw-r
 router.register(r'game', GameViewSet, basename='game')
 router.register(r'closed-date', CloseDateViewSet, basename='closed-date')
 router.register(r'game-draw-type', GameDrawTypeViewSet, basename='game-draw-type')
+router.register(r'bet-item', BetItemViewSet, basename='bet-item')
