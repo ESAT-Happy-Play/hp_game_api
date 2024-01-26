@@ -4,3 +4,4 @@ from .draw_result_winner import *
 from .game import *
 from .close_date import *
 from .game_draw_type import *
+from .game_schedule import *
