@@ -10,7 +10,7 @@ class PrizePool(models.Model):
     winningPrize = models.FloatField()
     totalBets = models.IntegerField()
     totalBetsAmount = models.IntegerField()
-    cardPrice = models.IntegerField(nullable=True)
+    cardPrice = models.IntegerField()
     specialDraw = models.BooleanField(default=False)
     isDeleted = models.BooleanField(default=False)
     
