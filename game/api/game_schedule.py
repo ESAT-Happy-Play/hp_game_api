@@ -11,7 +11,7 @@ class GameScheduleViewSet(BaseViewSet):
     queryset = GameSchedule.objects.filter(isDeleted=False)
     serializer_class = GameScheduleSerializer
 
-    @action(detail=True, methods=['get'])
+    @action(detail=True, methods=['get'], url_path='combination-percentage')
     def combination_percentage(self, request, pk=None):
         """
         Get the combination percentage of the draw given gameScheduleId.
@@ -31,7 +31,7 @@ class GameScheduleViewSet(BaseViewSet):
         data = {'combination_percentage': combination_percentage}
         return JsonResponse(data, status=status.HTTP_200_OK)
 
-    @action(detail=True, methods=['get'])
+    @action(detail=True, methods=['get'], url_path='total-bet-amount')
     def total_bet_amount(self, request, pk=None):
         """
         Get total amount of bets given gameScheduleId.
