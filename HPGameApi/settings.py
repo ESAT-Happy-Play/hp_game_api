@@ -80,10 +80,10 @@ WSGI_APPLICATION = 'HPGameApi.wsgi.application'
 DATABASES = {
     'default': {
         "ENGINE": "django.db.backends.postgresql",
-        "NAME": "GameApi",
-        "HOST": "localhost",
+        "NAME": "HPGameApi",
+        "HOST": "devsit.esat-apps.com",
         "USER": "postgres",
-        "PASSWORD": "hpesat", 
+        "PASSWORD": "795db3f3171fb6bfa935aa032493d153", 
         "PORT": "5432",
     }
 }
