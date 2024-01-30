@@ -12,6 +12,11 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 
 from pathlib import Path
 
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -20,7 +25,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-q6i3wdljd#rum=k8r(mzm5z7$13yaa(sjyo4(%+33lkok3og5z'
+SECRET_KEY = os.environ.get('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -87,8 +92,8 @@ SPECTACULAR_SETTINGS = {
 
 SIMPLEJWT = {
       "SIGNING_KEY": SECRET_KEY,
-      "ISSUER": "core-identity.dev-esat.com",
-      "AUDIENCE": "https://localhost:8000" 
+      "ISSUER": os.environ.get('JWT_ISSUER'),
+      "AUDIENCE": os.environ.get('JWT_AUDIENCE') 
 }
 
 # Database
@@ -97,11 +102,11 @@ SIMPLEJWT = {
 DATABASES = {
     'default': {
         "ENGINE": "django.db.backends.postgresql",
-        "NAME": "HPGameApi",
-        "HOST": "devsit.esat-apps.com",
-        "USER": "postgres",
-        "PASSWORD": "795db3f3171fb6bfa935aa032493d153", 
-        "PORT": "5432",
+        "NAME": os.environ.get('DB_NAME'),
+        "HOST": os.environ.get('DB_HOST'),
+        "USER": os.environ.get('DB_USER'),
+        "PASSWORD": os.environ.get('DB_PASS'), 
+        "PORT": os.environ.get('DB_PORT'),
     }
 }
 
