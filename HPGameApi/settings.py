@@ -40,7 +40,7 @@ INSTALLED_APPS = [
     'game',
     'rest_framework_swagger',
     'rest_framework',
-    'drf_yasg',
+    'drf_spectacular',
 ]
 
 MIDDLEWARE = [
@@ -73,6 +73,23 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'HPGameApi.wsgi.application'
 
+REST_FRAMEWORK = {
+       "NON_FIELD_ERRORS_KEY": "errors",
+       "DEFAULT_AUTHENTICATION_CLASSES": (
+           'rest_framework_simplejwt.authentication.JWTAuthentication',
+       ),
+       "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema"
+   }
+
+SPECTACULAR_SETTINGS = {
+    "TITLE": "Happy Play",
+}
+
+SIMPLEJWT = {
+      "SIGNING_KEY": SECRET_KEY,
+      "ISSUER": "core-identity.dev-esat.com",
+      "AUDIENCE": "https://localhost:8000" 
+}
 
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
