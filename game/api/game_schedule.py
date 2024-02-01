@@ -15,7 +15,7 @@ class GameScheduleViewSet(BaseViewSet):
     @extend_schema(request=GameScheduleCreateSerializer)
     def create(self, request):
         game_draw_type_pk = request.data['gameDrawType']
-        game_draw_type = get_object_or_404(GameDrawType, pk=game_draw_type_pk)
+        game_draw_type = get_object_or_404(GameDrawType, pk=game_draw_type_pk, isDeleted=False)
         request.data['openSchedule'] = game_draw_type.openSchedule
         request.data['endCutOff'] = game_draw_type.endCutOff
         return super().create(request)
