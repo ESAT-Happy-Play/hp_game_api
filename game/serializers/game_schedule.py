@@ -7,3 +7,8 @@ class GameScheduleSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = GameSchedule
 		fields = '__all__'
+
+class GameScheduleCreateSerializer(GameScheduleSerializer):
+  class Meta:
+    model = GameSchedule
+    exclude = ('openSchedule', 'endCutOff', 'isDeleted')
