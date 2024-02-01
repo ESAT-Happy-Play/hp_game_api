@@ -11,6 +11,7 @@ class GameSchedule(models.Model):
   date = models.DateField()
   openSchedule = models.TimeField()
   endCutOff = models.TimeField()
+  status = models.IntegerField() # 0-not yet drawn, 1-drawn
   isDeleted= models.BooleanField(default=False)
 
   def __str__(self):
