@@ -9,6 +9,8 @@ class GameSchedule(models.Model):
   gameDrawType = models.ForeignKey(GameDrawType, verbose_name=("GameDrawType"), on_delete=models.CASCADE)
   companyGame = models.ForeignKey(CompanyGame, verbose_name=("CompanyGame"), on_delete=models.CASCADE)
   date = models.DateField()
+  openSchedule = models.TimeField()
+  endCutOff = models.TimeField()
   isDeleted= models.BooleanField(default=False)
 
   def __str__(self):
