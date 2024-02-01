@@ -1,15 +1,24 @@
-from game.serializers import GameScheduleSerializer
-from game.models import GameSchedule, BetItem
+from game.serializers import GameScheduleSerializer, GameScheduleCreateSerializer
+from game.models import GameSchedule, BetItem, GameDrawType
 from .base_viewset import BaseViewSet
 from django.http import JsonResponse
 from rest_framework import status
 from rest_framework.decorators import action
 from django.shortcuts import get_object_or_404
 from django.db.models import Count, Sum
+from drf_spectacular.utils import extend_schema
 
 class GameScheduleViewSet(BaseViewSet):
     queryset = GameSchedule.objects.filter(isDeleted=False)
     serializer_class = GameScheduleSerializer
+
+    @extend_schema(request=GameScheduleCreateSerializer)
+    def create(self, request):
+        game_draw_type_pk = request.data['gameDrawType']
+        game_draw_type = get_object_or_404(GameDrawType, pk=game_draw_type_pk)
+        request.data['openSchedule'] = game_draw_type.openSchedule
+        request.data['endCutOff'] = game_draw_type.endCutOff
+        return super().create(request)
 
     @action(detail=True, methods=['get'], url_path='combination-percentage')
     def combination_percentage(self, request, pk=None):
