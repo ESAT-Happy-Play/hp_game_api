@@ -6,8 +6,8 @@ from game.models.game_draw_type import GameDrawType
 class GameSchedule(models.Model):
   """Model definition for GameSchedule."""
 
-  gameDrawType = models.ForeignKey(GameDrawType, verbose_name=("GameDrawType"), on_delete=models.CASCADE)
-  companyGame = models.ForeignKey(CompanyGame, verbose_name=("CompanyGame"), on_delete=models.CASCADE)
+  gameDrawType = models.ForeignKey(GameDrawType, related_name=("gameSchedule"), on_delete=models.CASCADE)
+  companyGame = models.ForeignKey(CompanyGame, related_name=("gameSchedule"), on_delete=models.CASCADE)
   date = models.DateField()
   openSchedule = models.TimeField()
   endCutOff = models.TimeField()

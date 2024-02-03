@@ -1,4 +1,4 @@
-from game.serializers import CompanyGameSerializer, GameScheduleSerializer
+from game.serializers import CompanyGameSerializer, GameScheduleSerializer, CompanyGameCreateSerializer
 from game.models import CompanyGame, GameSchedule
 from .base_viewset import BaseViewSet
 from rest_framework import status
@@ -6,11 +6,16 @@ from django.http import JsonResponse
 from rest_framework.decorators import action
 from django.shortcuts import get_object_or_404
 from datetime import datetime, timedelta
+from drf_spectacular.utils import extend_schema
 
 class CompanyGameViewSet(BaseViewSet):
     queryset = CompanyGame.objects.filter(isDeleted=False)
     serializer_class = CompanyGameSerializer
 
+    
+    @extend_schema(request=CompanyGameCreateSerializer)
+    def create(self, request):
+        return super().create(request)
 
     @action(detail=True, methods=["get"], url_path="bets/current")
     def get_bet_current(self,request, pk=None):

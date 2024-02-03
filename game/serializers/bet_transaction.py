@@ -5,3 +5,9 @@ class BetTransactionSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = BetTransaction
 		fields = '__all__'
+		
+		
+class BetTransactionCreateSerializer(BetTransactionSerializer):
+    class Meta:
+        model = BetTransaction
+        exclude = ('isDeleted', 'transactionNumber')

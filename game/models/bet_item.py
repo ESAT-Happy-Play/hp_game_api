@@ -6,12 +6,12 @@ from game.models.bet_transaction import BetTransaction
 class BetItem(models.Model):
     """Model definition for BetItem."""
 
-    value = models.IntegerField()
+    value = models.CharField(max_length=20)
     orderItemId = models.BigIntegerField()
     amount = models.IntegerField()
-    betTransaction = models.ForeignKey(BetTransaction, verbose_name=("BetTransaction"), on_delete=models.CASCADE)
-    companyGame = models.ForeignKey(CompanyGame, verbose_name=("CompanyGame"), on_delete=models.CASCADE)
-    gameSchedule = models.ForeignKey(GameSchedule, verbose_name=("GameSchedule"), on_delete=models.CASCADE)
+    betTransaction = models.ForeignKey(BetTransaction, related_name=("betItem"), on_delete=models.CASCADE)
+    companyGame = models.ForeignKey(CompanyGame, related_name=("betItem"), on_delete=models.CASCADE)
+    gameSchedule = models.ForeignKey(GameSchedule, related_name=("betItem"), on_delete=models.CASCADE)
     transactionDate = models.DateField()
     isDeleted = models.BooleanField(default=False)
     

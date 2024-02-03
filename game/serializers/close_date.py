@@ -5,3 +5,9 @@ class CloseDateSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = CloseDate
 		fields = '__all__'
+            
+        
+class CloseDateCreateSerializer(CloseDateSerializer):
+    class Meta:
+        model = CloseDate
+        exclude = ('isDeleted',)

@@ -1,5 +1,5 @@
 from django.db import models
-from game.models.game_schedule import GameSchedule
+from .game_schedule import GameSchedule
 
 class DrawResult(models.Model):
     """Model definition for DrawResult."""
