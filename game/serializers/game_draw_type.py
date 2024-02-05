@@ -5,3 +5,8 @@ class GameDrawTypeSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = GameDrawType
 		fields = '__all__'
+
+class GameDrawTypeUpdateSerializer(GameDrawTypeSerializer):
+	class Meta:
+		model = GameDrawType
+		exclude = ('companyId',)
