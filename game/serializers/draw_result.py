@@ -13,4 +13,4 @@ class DrawResultSerializer(serializers.ModelSerializer):
 class DrawResultCreateSerializer(DrawResultSerializer):
   class Meta:
     model = DrawResult
-    exclude = ('noOfWinners', 'isDeleted')
+    exclude = ('noOfWinners', 'isDeleted', 'noOfQuasiWinners')

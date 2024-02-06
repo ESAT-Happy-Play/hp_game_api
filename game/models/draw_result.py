@@ -8,6 +8,7 @@ class DrawResult(models.Model):
     result = models.CharField(max_length=30)
     amount = models.FloatField()
     noOfWinners = models.IntegerField()
+    noOfQuasiWinners = models.IntegerField()
     isDeleted = models.BooleanField(default=False)
     
     def __str__(self):
