@@ -14,6 +14,9 @@ class BetItem(models.Model):
     gameSchedule = models.ForeignKey(GameSchedule, related_name=("betItem"), on_delete=models.CASCADE)
     transactionDate = models.DateField()
     isDeleted = models.BooleanField(default=False)
+
+    def bet_list(self):
+        return sorted(self.value.split('-'))
     
     def __str__(self):
         """Unicode representation of BetItem."""
