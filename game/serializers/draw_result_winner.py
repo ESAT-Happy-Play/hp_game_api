@@ -6,4 +6,7 @@ class DrawResultWinnerSerializer(serializers.ModelSerializer):
         model = DrawResultWinner
         fields = '__all__'
 
-    
+class DrawResultWinnerCreateSerializer(DrawResultWinnerSerializer):
+    class Meta:
+        model = DrawResultWinner
+        exclude = ('isDeleted',)

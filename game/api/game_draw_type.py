@@ -1,14 +1,22 @@
-from game.serializers import GameDrawTypeSerializer, GameDrawTypeUpdateSerializer
+from game.serializers import GameDrawTypeSerializer, GameDrawTypeUpdateSerializer, GameDrawTypeCreateSerializer
 from game.models import GameDrawType, GameSchedule
 from .base_viewset import BaseViewSet
-from rest_framework import viewsets, status
+from rest_framework import status
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
 from drf_spectacular.utils import extend_schema
+from datetime import datetime
 
 class GameDrawTypeViewSet(BaseViewSet):
     queryset = GameDrawType.objects.filter(isDeleted=False)
     serializer_class = GameDrawTypeSerializer
+
+    @extend_schema(request=GameDrawTypeCreateSerializer)
+    def create(self, request):
+        time = datetime.strptime(request.data['drawTime'], '%H:%M:%S')
+        request.data['gameDrawTypeName'] = time.strftime('%I:%M %p').lstrip('0')
+        return super().create(request)
+    
 
     @extend_schema(request=GameDrawTypeUpdateSerializer)
     def update(self, request, pk=None):

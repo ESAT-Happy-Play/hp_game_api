@@ -7,3 +7,7 @@ class PrizePoolSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
     
+class PrizePoolCreateSerializer(PrizePoolSerializer):
+  class Meta:
+    model = PrizePool
+    exclude = ('isDeleted',)
