@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'rest_framework_swagger',
     'rest_framework',
     'drf_spectacular',
+    'rest_framework_simplejwt',
 ]
 
 MIDDLEWARE = [
@@ -81,7 +82,7 @@ WSGI_APPLICATION = 'HPGameApi.wsgi.application'
 REST_FRAMEWORK = {
        "NON_FIELD_ERRORS_KEY": "errors",
        "DEFAULT_AUTHENTICATION_CLASSES": (
-           'rest_framework_simplejwt.authentication.JWTAuthentication',
+           'rest_framework_simplejwt.authentication.JWTStatelessUserAuthentication',
        ),
        "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema"
    }
@@ -90,10 +91,10 @@ SPECTACULAR_SETTINGS = {
     "TITLE": "Happy Play",
 }
 
-SIMPLEJWT = {
-      "SIGNING_KEY": SECRET_KEY,
+SIMPLE_JWT = {
+      "SIGNING_KEY": os.environ.get('JWT_KEY'),
       "ISSUER": os.environ.get('JWT_ISSUER'),
-      "AUDIENCE": os.environ.get('JWT_AUDIENCE') 
+      "AUDIENCE": os.environ.get('JWT_AUDIENCE'),
 }
 
 # Database
