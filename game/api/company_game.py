@@ -1,4 +1,4 @@
-from game.serializers import CompanyGameSerializer, GameScheduleSerializer, CompanyGameCreateSerializer
+from game.serializers import CompanyGameSerializer, GameScheduleSerializer, CompanyGameCreateSerializer, CompanyGameUpdateSerializer
 from game.models import CompanyGame, GameSchedule
 from .base_viewset import BaseViewSet
 from rest_framework import status
@@ -16,6 +16,14 @@ class CompanyGameViewSet(BaseViewSet):
     @extend_schema(request=CompanyGameCreateSerializer)
     def create(self, request):
         return super().create(request)
+
+    @extend_schema(request=CompanyGameUpdateSerializer)
+    def update(self, request, pk=None):
+        instance = get_object_or_404(self.queryset, pk=pk)
+        serializer = CompanyGameUpdateSerializer(instance, data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return JsonResponse(serializer.data, status=status.HTTP_200_OK)
 
     @action(detail=True, methods=["get"], url_path="bets/current")
     def get_bet_current(self,request, pk=None):

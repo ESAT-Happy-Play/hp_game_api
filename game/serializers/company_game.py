@@ -12,3 +12,8 @@ class CompanyGameCreateSerializer(CompanyGameSerializer):
     class Meta:
         model = CompanyGame
         exclude = ('isDeleted',)
+
+class CompanyGameUpdateSerializer(CompanyGameSerializer):
+    class Meta:
+        model = CompanyGame
+        exclude = ('companyId', 'game')
