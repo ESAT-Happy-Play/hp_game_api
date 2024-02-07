@@ -10,6 +10,7 @@ class CompanyGame(models.Model):
     companyId = models.CharField(max_length=40)
     game = models.ForeignKey(Game, verbose_name=("Game"), on_delete=models.CASCADE)
     gameSettings = models.JSONField("GameSettings", default=game_settings_default)
+    livestream = models.URLField(null=True)
     isDeleted= models.BooleanField(default=False)
 
     def __str__(self):
