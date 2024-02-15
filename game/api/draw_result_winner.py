@@ -19,20 +19,17 @@ class DrawResultWinnerViewSet(BaseViewSet):
         """
         Get winners from latest 2 draws.
         """
-        two_latest_draws = DrawResult.objects.all().order_by('-id')[:2].values_list('id', flat=True)
+        two_latest_draws = DrawResult.objects.filter( isDeleted=False).order_by('-id')[:2].values_list('id', flat=True)
         two_latest_draws_list = list(two_latest_draws)
 
-        if len(two_latest_draws_list) != 2:
-          data = {'error': 'DrawResult objects are fewer than 2'}
-          return JsonResponse(data, status=status.HTTP_404_NOT_FOUND)
+        if not two_latest_draws_list:
+          data = {'error': 'DrawResult data is empty'}
+          return JsonResponse(data, status=status.HTTP_400_BAD_REQUEST)
 
-        winners1 = DrawResultWinner.objects.filter(drawResult=two_latest_draws_list[0], isDeleted=False)
-        winners2 = DrawResultWinner.objects.filter(drawResult=two_latest_draws_list[1], isDeleted=False)
-        serializer1 = DrawResultWinnerSerializer(winners1, many=True)
-        serializer2 = DrawResultWinnerSerializer(winners2, many=True)
+        winners_data = []
+        for draw_id in two_latest_draws_list:
+          winners = DrawResultWinner.objects.filter(drawResult=draw_id, isDeleted=False)
+          serializer = DrawResultWinnerSerializer(winners, many=True)
+          winners_data.append(serializer.data)
 
-        data = {
-          '1st_latest_draw_winners': serializer1.data,
-          '2nd_latest_draw_winners': serializer2.data
-        }
-        return JsonResponse(data, status=status.HTTP_200_OK)
+        return JsonResponse({'winners': winners_data}, status=status.HTTP_200_OK)
