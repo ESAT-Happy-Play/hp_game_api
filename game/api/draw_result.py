@@ -34,6 +34,8 @@ class DrawResultViewSet(BaseViewSet):
             result_digits = sorted(request.data['result'].split('-'))
             
             quasi_winners = [bet for bet in bets.exclude(value=request.data['result']) if bet.bet_list() == result_digits]
+        else:
+          quasi_winners = []
 
         request.data['noOfWinners'] = len(winner_list)
         request.data['noOfQuasiWinners'] = len(quasi_winners)
