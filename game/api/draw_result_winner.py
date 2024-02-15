@@ -15,7 +15,7 @@ class DrawResultWinnerViewSet(BaseViewSet):
         return super().create(request)
 
     @action(detail=False, methods=['get'], url_path='last-two-draws')
-    def total_bet_amount(self, request):
+    def last_two_draws_winners(self, request):
         """
         Get winners from latest 2 draws.
         """
