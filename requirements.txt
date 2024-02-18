@@ -1,8 +1,9 @@
+psycopg2-binary
+gunicorn
 django
 djangorestframework
 requests
 django-cors-headers
-psycopg2
 python-dotenv
 
 django-rest-swagger
