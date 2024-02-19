@@ -7,7 +7,7 @@ class CompanyGame(models.Model):
     def game_settings_default():
         return {"min_bet": 25}
     
-    companyId = models.CharField(max_length=40)
+    companyId = models.UUIDField()
     game = models.ForeignKey(Game, verbose_name=("Game"), on_delete=models.CASCADE)
     gameSettings = models.JSONField("GameSettings", default=game_settings_default)
     isDeleted= models.BooleanField(default=False)

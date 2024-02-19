@@ -6,7 +6,7 @@ class DrawResultWinner(models.Model):
     """Model definition for DrawResultWinner."""
 
     drawResult = models.ForeignKey(DrawResult, related_name='drawResultWinner', on_delete=models.CASCADE)
-    accountInfoId = models.CharField(max_length=40)
+    accountInfoId = models.BigIntegerField()
     amount = models.FloatField()
     betInfo = models.ForeignKey(BetItem, related_name='drawResultWinner', on_delete=models.CASCADE)
     isQuasi = models.BooleanField(default=False)

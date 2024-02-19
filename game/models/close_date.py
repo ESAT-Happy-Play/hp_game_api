@@ -7,7 +7,7 @@ class CloseDate(models.Model):
   date = models.DateField()
   isWholeday = models.BooleanField(default=True)
   closedDrawType = models.ForeignKey(GameDrawType, verbose_name=("GameDrawType"), null=True, on_delete=models.CASCADE)
-  companyId = models.CharField(max_length=40)
+  companyId = models.UUIDField()
   isDeleted= models.BooleanField(default=False)
 
   def __str__(self):
