@@ -14,6 +14,7 @@ from pathlib import Path
 
 from dotenv import load_dotenv
 import os
+import base64
 
 load_dotenv(override=True)
 
@@ -81,7 +82,7 @@ WSGI_APPLICATION = 'HPGameApi.wsgi.application'
 REST_FRAMEWORK = {
        "NON_FIELD_ERRORS_KEY": "errors",
        "DEFAULT_AUTHENTICATION_CLASSES": (
-           'rest_framework_simplejwt.authentication.JWTAuthentication',
+           'rest_framework_simplejwt.authentication.JWTStatelessUserAuthentication',
        ),
        "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema"
    }
@@ -90,10 +91,14 @@ SPECTACULAR_SETTINGS = {
     "TITLE": "Happy Play",
 }
 
-SIMPLEJWT = {
-      "SIGNING_KEY": SECRET_KEY,
+SIMPLE_JWT = {
+      "SIGNING_KEY": base64.b64encode(bytes(SECRET_KEY, 'utf-8')),
       "ISSUER": os.environ.get('JWT_ISSUER'),
-      "AUDIENCE": os.environ.get('JWT_AUDIENCE') 
+      "AUDIENCE": os.environ.get('JWT_AUDIENCE'),
+      "JTI_CLAIM": "tenantId",
+      "TOKEN_TYPE_CLAIM": "sliding",
+      "USER_ID_CLAIM": "tenantId",
+      "AUTH_TOKEN_CLASSES":('rest_framework_simplejwt.tokens.SlidingToken',)
 }
 
 # Database

@@ -6,7 +6,7 @@ class GameDrawType(models.Model):
     Default draw close to 5 mins
     """
 
-    companyId = models.CharField(max_length=40)
+    companyId = models.UUIDField()
     gameDrawTypeName = models.CharField(max_length=50)
     openSchedule = models.TimeField()
     endCutOff = models.TimeField()
