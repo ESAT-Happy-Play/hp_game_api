@@ -13,7 +13,7 @@ class CompanyGameViewSet(BaseViewSet):
     queryset = CompanyGame.objects.filter(isDeleted=False)
     serializer_class = CompanyGameSerializer
 
-    @extend_schema(parameters=[OpenApiParameter(name='companyId', description='comapanyId filter', type=str)])
+    @extend_schema(parameters=[OpenApiParameter(name='companyId', description='companyId filter', type=str)])
     def list(self, request):
         queryset = self.queryset
         company_id = self.request.query_params.get('companyId', None)
