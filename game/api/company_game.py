@@ -84,3 +84,11 @@ class CompanyGameViewSet(BaseViewSet):
         
         backlogs_serializer = GameScheduleSerializer(backlogs, many=True)
         return JsonResponse(backlogs_serializer.data, status=status.HTTP_200_OK, safe=False)
+
+    @action(detail=True, methods=["get"], url_path="schedules")
+    def get_company_game_schedules(self,request, pk=None):
+        company_game = get_object_or_404(self.queryset, pk=pk)
+        schedules = GameSchedule.objects.filter(companyGame=company_game, isDeleted=False)
+        
+        schedules_serializer = GameScheduleSerializer(schedules, many=True)
+        return JsonResponse(schedules_serializer.data, status=status.HTTP_200_OK, safe=False)

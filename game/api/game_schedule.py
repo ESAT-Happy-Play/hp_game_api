@@ -6,22 +6,11 @@ from rest_framework import status
 from rest_framework.decorators import action
 from django.shortcuts import get_object_or_404
 from django.db.models import Count, Sum
-from drf_spectacular.utils import extend_schema, OpenApiParameter
+from drf_spectacular.utils import extend_schema
 
 class GameScheduleViewSet(BaseViewSet):
     queryset = GameSchedule.objects.filter(isDeleted=False)
     serializer_class = GameScheduleSerializer
-
-    @extend_schema(parameters=[OpenApiParameter(name='gameId', description='gameId filter', type=int)])
-    def list(self, request):
-        queryset = self.queryset
-        game_id = self.request.query_params.get('gameId', None)
-        
-        if game_id:
-            queryset = queryset.filter(companyGame=game_id)
-
-        serializer = self.serializer_class(queryset, many=True)
-        return JsonResponse(serializer.data, status=status.HTTP_200_OK, safe=False)
 
     @extend_schema(request=GameScheduleCreateSerializer)
     def create(self, request):
