@@ -8,7 +8,8 @@ from drf_spectacular.utils import extend_schema
 from datetime import datetime
 
 class GameDrawTypeViewSet(BaseViewSet):
-    queryset = GameDrawType.objects.filter(isDeleted=False)
+    queryset = GameDrawType.objects.all()
+    active_queryset = queryset.filter(isDeleted=False)
     serializer_class = GameDrawTypeSerializer
 
     @extend_schema(request=GameDrawTypeCreateSerializer)
@@ -20,7 +21,7 @@ class GameDrawTypeViewSet(BaseViewSet):
 
     @extend_schema(request=GameDrawTypeUpdateSerializer)
     def update(self, request, pk=None):
-        instance = get_object_or_404(self.queryset, pk=pk)
+        instance = get_object_or_404(self.active_queryset, pk=pk)
         serializer = GameDrawTypeUpdateSerializer(instance, data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()

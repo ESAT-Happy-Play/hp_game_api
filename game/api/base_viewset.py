@@ -3,6 +3,7 @@ from django.shortcuts import get_object_or_404
 from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
+from drf_spectacular.utils import extend_schema, OpenApiParameter
 
 class BaseViewSet(viewsets.ViewSet):
     """Allows basic operations like list, retrieve, delete, """
@@ -15,9 +16,15 @@ class BaseViewSet(viewsets.ViewSet):
     # permission_classes = [IsAuthenticated]
 
 
-
+    @extend_schema(parameters=[OpenApiParameter(name='includeIsDeleted', description='isDeleted filter', type=bool)])
     def list(self, request):
-        serializer = self.serializer_class(self.queryset, many=True)
+        include_is_deleted = request.query_params.get('includeIsDeleted', 'true').lower() == 'true'
+        queryset = self.queryset
+
+        if not include_is_deleted:
+            queryset = self.queryset.filter(isDeleted=False)
+
+        serializer = self.serializer_class(queryset, many=True)
         return JsonResponse(serializer.data, status=status.HTTP_200_OK, safe=False)
     
     def retrieve(self, request, pk=None):
