@@ -1,0 +1,7 @@
+from rest_framework import serializers
+from game.models import CombinationLimit
+
+class CombinationLimitSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CombinationLimit
+        fields = '__all__'

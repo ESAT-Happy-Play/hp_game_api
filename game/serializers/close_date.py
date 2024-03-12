@@ -11,3 +11,8 @@ class CloseDateCreateSerializer(CloseDateSerializer):
     class Meta:
         model = CloseDate
         exclude = ('isDeleted',)
+
+class CloseDateUpdateSerializer(CloseDateSerializer):
+    class Meta:
+        model = CloseDate
+        fields = ('status',)

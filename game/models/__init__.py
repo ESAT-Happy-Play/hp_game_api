@@ -8,3 +8,4 @@ from .game import *
 from .bet_item import *
 from .prize_pool import *
 from .bet_transaction import *
+from .combination_limit import *

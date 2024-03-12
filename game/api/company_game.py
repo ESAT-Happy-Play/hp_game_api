@@ -6,13 +6,28 @@ from django.http import JsonResponse
 from rest_framework.decorators import action
 from django.shortcuts import get_object_or_404
 from datetime import datetime, timedelta
-from drf_spectacular.utils import extend_schema
+from drf_spectacular.utils import extend_schema, OpenApiParameter
+import uuid
 
 class CompanyGameViewSet(BaseViewSet):
     queryset = CompanyGame.objects.filter(isDeleted=False)
     serializer_class = CompanyGameSerializer
 
-    
+    @extend_schema(parameters=[OpenApiParameter(name='companyId', description='companyId filter', type=str)])
+    def list(self, request):
+        queryset = self.queryset
+        company_id = self.request.query_params.get('companyId', None)
+        
+        if company_id:
+            try:
+                company_id = uuid.UUID(company_id)
+                queryset = queryset.filter(companyId__exact=company_id)
+            except ValueError:
+                return JsonResponse({"error": "Invalid UUID format for companyId"}, status=status.HTTP_400_BAD_REQUEST)
+
+        serializer = self.serializer_class(queryset, many=True)
+        return JsonResponse(serializer.data, status=status.HTTP_200_OK, safe=False)
+        
     @extend_schema(request=CompanyGameCreateSerializer)
     def create(self, request):
         return super().create(request)
@@ -69,3 +84,11 @@ class CompanyGameViewSet(BaseViewSet):
         
         backlogs_serializer = GameScheduleSerializer(backlogs, many=True)
         return JsonResponse(backlogs_serializer.data, status=status.HTTP_200_OK, safe=False)
+
+    @action(detail=True, methods=["get"], url_path="schedules")
+    def get_company_game_schedules(self,request, pk=None):
+        company_game = get_object_or_404(self.queryset, pk=pk)
+        schedules = GameSchedule.objects.filter(companyGame=company_game, isDeleted=False)
+        
+        schedules_serializer = GameScheduleSerializer(schedules, many=True)
+        return JsonResponse(schedules_serializer.data, status=status.HTTP_200_OK, safe=False)
