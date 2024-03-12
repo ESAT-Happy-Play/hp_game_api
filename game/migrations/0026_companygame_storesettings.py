@@ -7,7 +7,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('game', '0023_companygame_livestream_alter_closedate_companyid_and_more'),
+        ('game', '0025_combinationlimit'),
     ]
 
     operations = [
