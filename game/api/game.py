@@ -25,8 +25,8 @@ class GameViewSet(BaseViewSet):
       game_data = serializer.data
       game_mechanics = game_data.get('gameMechanics')
 
-      n_cards = game_mechanics.get('n_cards')
-      n_suites = game_mechanics.get('n_suites')
+      n_cards = game_mechanics.get('nCards')
+      n_suites = game_mechanics.get('nSuites')
 
       cards = ["A", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"]
       suites = ["H", "S", "D", "C"]

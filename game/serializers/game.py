@@ -8,13 +8,13 @@ class GameSerializer(serializers.ModelSerializer):
 
     def validate(self, data):
         game_mechanics = data.get('gameMechanics', {})
-        n_cards = game_mechanics.get('n_cards')
-        n_suites = game_mechanics.get('n_suites')
+        n_cards = game_mechanics.get('nCards')
+        n_suites = game_mechanics.get('nSuites')
 
         if n_cards is None:
-            raise serializers.ValidationError("n_cards field is required")
-        if n_suites is None and 'n_suites' not in game_mechanics:
-            raise serializers.ValidationError("n_suites field is required")
+            raise serializers.ValidationError("nCards attribute in gameMechanics is required")
+        if n_suites is None and 'nSuites' not in game_mechanics:
+            raise serializers.ValidationError("nSuites attribute in gameMechanics is required")
 
         return data
 
