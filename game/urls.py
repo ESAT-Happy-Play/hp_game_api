@@ -1,4 +1,3 @@
-from django.urls import path, include
 from game.api import *
 from rest_framework import routers
 
@@ -15,3 +14,4 @@ router.register(r'game-schedule', GameScheduleViewSet, basename='game-schedule')
 router.register(r'prize-pool', PrizePoolViewSet, basename='prize-pool')
 router.register(r'bet-transaction', BetTransactionViewSet, basename='bet-transaction')
 router.register(r'combination-limit', CombinationLimitViewSet, basename='combination-limit')
+router.register(r'win-streak', WinStreakViewSet, basename='win-streak')
