@@ -25,7 +25,11 @@ SECRET_KEY = 'django-insecure-q6i3wdljd#rum=k8r(mzm5z7$13yaa(sjyo4(%+33lkok3og5z
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+<<<<<<< Updated upstream
 ALLOWED_HOSTS = []
+=======
+ALLOWED_HOSTS = os.getenv('DJANGO_ALLOWED_HOSTS', 'localhost').split(',')
+>>>>>>> Stashed changes
 
 
 # Application definition
