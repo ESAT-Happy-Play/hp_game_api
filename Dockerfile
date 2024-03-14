@@ -14,7 +14,8 @@ RUN apt-get update && apt-get install -y libpq-dev gcc
 RUN pip install --upgrade pip
 RUN pip install  -r requirements.txt
 
-# Copy project
+# Make ports 80 and 443 available to the world outside this container
+EXPOSE 80 443
 
 # Run the application
 CMD ["gunicorn", "-b", "0.0.0.0:8000", "HPGameApi.wsgi:application"]

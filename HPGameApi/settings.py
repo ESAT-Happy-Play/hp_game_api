@@ -26,7 +26,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ.get('SECRET_KEY')
+SECRET_KEY = os.environ.get('JWT_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -91,13 +91,9 @@ SPECTACULAR_SETTINGS = {
 }
 
 SIMPLE_JWT = {
-      "SIGNING_KEY": base64.b64encode(bytes(SECRET_KEY, 'utf-8')),
+      "SIGNING_KEY": bytes(SECRET_KEY, 'utf-8'),
       "ISSUER": os.environ.get('JWT_ISSUER'),
-      "AUDIENCE": os.environ.get('JWT_AUDIENCE'),
-      "JTI_CLAIM": "tenantId",
-      "TOKEN_TYPE_CLAIM": "sliding",
-      "USER_ID_CLAIM": "tenantId",
-      "AUTH_TOKEN_CLASSES":('rest_framework_simplejwt.tokens.SlidingToken',)
+      "AUDIENCE": os.environ.get('JWT_AUDIENCE')
 }
 
 # Database
