@@ -14,4 +14,4 @@ class CloseDateCreateSerializer(CloseDateSerializer):
 class CloseDateUpdateSerializer(CloseDateSerializer):
     class Meta:
         model = CloseDate
-        fields = ('status', 'gameId')
+        fields = ('status', 'game')

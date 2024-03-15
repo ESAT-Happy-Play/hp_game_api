@@ -26,7 +26,7 @@ class CloseDateViewSet(BaseViewSet):
         start_date_str = request.query_params.get('startDate', None)
         end_date_str = request.query_params.get('endDate', None)
 
-        queryset = self.queryset.filter(companyId=companyId, gameId=gameId)
+        queryset = self.queryset.filter(companyId=companyId, game=gameId)
 
         if not include_is_deleted:
             queryset = self.queryset.filter(isDeleted=False)
