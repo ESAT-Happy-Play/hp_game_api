@@ -18,7 +18,9 @@ class CloseDateViewSet(BaseViewSet):
         OpenApiParameter(name='status', description='status filter', type=int),
         OpenApiParameter(name='startDate', description='start date for date range filter: YYYY-MM-DD', type=str),
         OpenApiParameter(name='endDate', description='end date for date range filter: YYYY-MM-DD', type=str),
-    ])
+        OpenApiParameter(name='gameId', description='Game ID', type=int, location=OpenApiParameter.PATH),
+    ],
+    operation_id='closed_date_list_with_path_params')
     @action(detail=False, methods=['get'], url_path='(?P<companyId>[^/.]+)/(?P<gameId>[^/.]+)')
     def closed_date_list(self, request, companyId=None, gameId=None):
         include_is_deleted = request.query_params.get('includeIsDeleted', 'true').lower() == 'true'
