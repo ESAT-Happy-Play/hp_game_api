@@ -1,10 +1,11 @@
 from django.db import models
-from game.models.game_schedule import GameSchedule
-from game.models.company_game import CompanyGame
+from .game_schedule import GameSchedule
+from .company_game import CompanyGame
 
 class PrizePool(models.Model):
     """Model definition for PrizePool."""
 
+    companyId = models.UUIDField()
     gameSchedule = models.ForeignKey(GameSchedule, verbose_name=("GameSchedule"), on_delete=models.CASCADE)
     companyGame = models.ForeignKey(CompanyGame, verbose_name=("CompanyGame"), on_delete=models.CASCADE)
     winningPrize = models.FloatField()
