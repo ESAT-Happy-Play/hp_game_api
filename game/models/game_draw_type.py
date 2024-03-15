@@ -1,4 +1,5 @@
 from django.db import models
+from game.models.game import Game
 
 class GameDrawType(models.Model):
     """
@@ -7,6 +8,7 @@ class GameDrawType(models.Model):
     """
 
     companyId = models.UUIDField()
+    game = models.ForeignKey(Game, verbose_name=("Game"), on_delete=models.CASCADE)
     gameDrawTypeName = models.CharField(max_length=50)
     openSchedule = models.TimeField()
     endCutOff = models.TimeField()
