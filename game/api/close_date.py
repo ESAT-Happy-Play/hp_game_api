@@ -7,6 +7,7 @@ from rest_framework import status
 from django.shortcuts import get_object_or_404
 from datetime import datetime
 from django.db.models import Q
+from rest_framework.decorators import action
 
 class CloseDateViewSet(BaseViewSet):
     queryset = CloseDate.objects.filter(isDeleted=False)
@@ -18,13 +19,14 @@ class CloseDateViewSet(BaseViewSet):
         OpenApiParameter(name='startDate', description='start date for date range filter: YYYY-MM-DD', type=str),
         OpenApiParameter(name='endDate', description='end date for date range filter: YYYY-MM-DD', type=str),
     ])
-    def list(self, request):
+    @action(detail=False, methods=['get'], url_path='(?P<companyId>[^/.]+)/(?P<gameId>[^/.]+)')
+    def closed_date_list(self, request, companyId=None, gameId=None):
         include_is_deleted = request.query_params.get('includeIsDeleted', 'true').lower() == 'true'
         status_filter = self.request.query_params.get('status', None)
         start_date_str = request.query_params.get('startDate', None)
         end_date_str = request.query_params.get('endDate', None)
 
-        queryset = self.queryset
+        queryset = self.queryset.filter(companyId=companyId, gameId=gameId)
 
         if not include_is_deleted:
             queryset = self.queryset.filter(isDeleted=False)
