@@ -1,11 +1,11 @@
 from django.db import models
-from game.models.company_game import CompanyGame
-from game.models.game_draw_type import GameDrawType
-# from game.models.draw_result import DrawResult
+from .company_game import CompanyGame
+from .game_draw_type import GameDrawType
 
 class GameSchedule(models.Model):
   """Model definition for GameSchedule."""
 
+  companyId = models.UUIDField()
   gameDrawType = models.ForeignKey(GameDrawType, related_name=("gameSchedule"), on_delete=models.CASCADE)
   companyGame = models.ForeignKey(CompanyGame, related_name=("gameSchedule"), on_delete=models.CASCADE)
   date = models.DateField()
