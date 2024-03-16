@@ -4,16 +4,16 @@ from game.models.game import Game
 class CompanyGame(models.Model):
     """Model definition for CompanyGame.
     gameSettings structure:
-        betLimits:{
-            betEntryLimit: int,
-            betAmountLimit: int,
-            uniqueCombination: int
+        "betLimits":{
+            "betEntryLimit": int,
+            "betAmountLimit": int,
+            "uniqueCombination": int
         },
-        betPrice: {
-            isFixed: bool,
-            amount: int (if fixed, this is betPrice, else this is betPriceLimit)
+        "betPrice": {
+            "isFixed": bool,
+            "amount": int (if fixed, this is betPrice, else this is betPriceLimit)
         },
-        priceCalculation:{
+        "prizeCalculation":{
             "winningMultiplier" : {
                 "winPerBet": int,
                 "minAmount": int,
@@ -53,7 +53,7 @@ class CompanyGame(models.Model):
                 "isFixed": True,
                 "amount": 10
             },
-            "priceCalculation":{
+            "prizeCalculation":{
                 "pooling" : {
                     "prizeFloor": 10000,
                     "prizeCeiling": 15000000,

@@ -17,7 +17,6 @@ class CompanyGameViewSet(BaseViewSet):
     def list(self, request):
         queryset = self.queryset
         company_id = self.request.query_params.get('companyId', None)
-        
         if company_id:
             try:
                 company_id = uuid.UUID(company_id)
@@ -28,9 +27,11 @@ class CompanyGameViewSet(BaseViewSet):
         serializer = self.serializer_class(queryset, many=True)
         return JsonResponse(serializer.data, status=status.HTTP_200_OK, safe=False)
         
+
     @extend_schema(request=CompanyGameCreateSerializer)
     def create(self, request):
         return super().create(request)
+
 
     @extend_schema(request=CompanyGameUpdateSerializer)
     def update(self, request, pk=None):
@@ -39,6 +40,7 @@ class CompanyGameViewSet(BaseViewSet):
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return JsonResponse(serializer.data, status=status.HTTP_200_OK)
+
 
     @action(detail=True, methods=["get"], url_path="bets/current")
     def get_bet_current(self,request, pk=None):
@@ -52,8 +54,9 @@ class CompanyGameViewSet(BaseViewSet):
         type_serializer = GameScheduleSerializer(types)
         return JsonResponse(type_serializer.data, status=status.HTTP_200_OK)
 
+
     @action(detail=True, methods=["get"], url_path="draw/current")
-    def get_draw_current(self,request, pk=None):
+    def get_draw_current(self, pk=None):
         company_game = get_object_or_404(self.queryset, pk=pk)
         current_time = datetime.now().time()
         current_date = datetime.now().date()
@@ -64,8 +67,9 @@ class CompanyGameViewSet(BaseViewSet):
         type_serializer = GameScheduleSerializer(types)
         return JsonResponse(type_serializer.data, status=status.HTTP_200_OK)
     
+
     @action(detail=True, methods=["get"], url_path="draw/next")
-    def get_draw_next(self,request, pk=None):
+    def get_draw_next(self, pk=None):
         company_game = get_object_or_404(self.queryset, pk=pk)
         current_time = datetime.now().time()
         current_date = datetime.now().date()
@@ -76,19 +80,71 @@ class CompanyGameViewSet(BaseViewSet):
         type_serializer = GameScheduleSerializer(types)
         return JsonResponse(type_serializer.data, status=status.HTTP_200_OK)
 
+
     @action(detail=True, methods=["get"], url_path="draw/backlogs")
-    def get_draw_backlogs(self,request, pk=None):
+    def get_draw_backlogs(self, pk=None):
         company_game = get_object_or_404(self.queryset, pk=pk)
         current_date = datetime.now().date()
         backlogs = GameSchedule.objects.filter(companyGame=company_game, status=0, date__lte=current_date, gameDrawType__drawTime__lte=(datetime.now()-timedelta(minutes=5)), isDeleted=False)
-        
         backlogs_serializer = GameScheduleSerializer(backlogs, many=True)
         return JsonResponse(backlogs_serializer.data, status=status.HTTP_200_OK, safe=False)
 
+
     @action(detail=True, methods=["get"], url_path="schedules")
-    def get_company_game_schedules(self,request, pk=None):
+    def get_company_game_schedules(self, pk=None):
         company_game = get_object_or_404(self.queryset, pk=pk)
         schedules = GameSchedule.objects.filter(companyGame=company_game, isDeleted=False)
-        
         schedules_serializer = GameScheduleSerializer(schedules, many=True)
         return JsonResponse(schedules_serializer.data, status=status.HTTP_200_OK, safe=False)
+    
+
+    # Chunk Endpoints
+
+    @action(detail=True, methods=["get", "patch"], url_path="bet-price")
+    def chunk_bet_price(self, request, pk=None):
+        if(request.method == 'GET'):
+            company_game = get_object_or_404(self.queryset, pk=pk)
+            bet_price = company_game.gameSettings["betPrice"]
+            return JsonResponse(bet_price, status=status.HTTP_200_OK, safe=False)
+        
+        if(request.method == 'PATCH'):
+            instance = get_object_or_404(self.queryset, pk=pk)
+            instance.gameSettings["betPrice"] = request.data
+            serializer = self.serializer_class(instance, data=instance.gameSettings["betPrice"], partial=True)
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
+            return JsonResponse(serializer.data)
+        
+    
+    @action(detail=True, methods=["get", "patch"], url_path="prize-calculation")
+    def chunk_prize_calculation(self, request, pk=None):
+        if(request.method == 'GET'):
+            company_game = get_object_or_404(self.queryset, pk=pk)
+            prize_calculation = company_game.gameSettings["prizeCalculation"]
+            return JsonResponse(prize_calculation, status=status.HTTP_200_OK, safe=False)
+        
+        if(request.method == 'PATCH'):
+            instance = get_object_or_404(self.queryset, pk=pk)
+            instance.gameSettings["prizeCalculation"] = request.data
+            serializer = self.serializer_class(instance, data=instance.gameSettings["prizeCalculation"], partial=True)
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
+            return JsonResponse(serializer.data)
+    
+    
+    @action(detail=True, methods=["get", "patch"], url_path="bet-limits")
+    def chunk_bet_limits(self, request, pk=None):
+        if(request.method == 'GET'):
+            company_game = get_object_or_404(self.queryset, pk=pk)
+            bet_limits = company_game.gameSettings["betLimits"]
+            return JsonResponse(bet_limits, status=status.HTTP_200_OK, safe=False)
+        
+        if(request.method == 'PATCH'):
+            instance = get_object_or_404(self.queryset, pk=pk)
+            instance.gameSettings["betLimits"] = request.data
+            serializer = self.serializer_class(instance, data=instance.gameSettings["betLimits"], partial=True)
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
+            return JsonResponse(serializer.data)
+    
+    
