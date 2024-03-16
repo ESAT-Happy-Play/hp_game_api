@@ -1,4 +1,4 @@
-from game.serializers import CompanyGameSerializer, GameScheduleSerializer, CompanyGameCreateSerializer, CompanyGameUpdateSerializer
+from game.serializers import CompanyGameSerializer, GameScheduleSerializer, CompanyGameCreateSerializer, CompanyGameUpdateSerializer, BetLimitsSerializer, PrizeCalculationSerializer, BetPriceSerializer, StoreLimitsSerializer, DeckLimitsSerializer
 from game.models import CompanyGame, GameSchedule
 from .base_viewset import BaseViewSet
 from rest_framework import status
@@ -100,68 +100,85 @@ class CompanyGameViewSet(BaseViewSet):
 
     # Chunk Endpoints
 
+    @extend_schema(request=BetPriceSerializer, responses=BetPriceSerializer)
     @action(detail=True, methods=["get", "patch"], url_path="bet-price")
     def chunk_bet_price(self, request, pk=None):
         if(request.method == 'GET'):
             company_game = get_object_or_404(self.queryset, pk=pk)
             bet_price = company_game.gameSettings["betPrice"]
-            return JsonResponse(bet_price, status=status.HTTP_200_OK, safe=False)
+            return JsonResponse(bet_price, status=status.HTTP_200_OK)
         
         if(request.method == 'PATCH'):
             instance = get_object_or_404(self.queryset, pk=pk)
+            bet_price = BetPriceSerializer(data=request.data)
+            bet_price.is_valid(raise_exception=True)
+
             instance.gameSettings["betPrice"] = request.data
             serializer = self.serializer_class(instance, data=instance.gameSettings["betPrice"], partial=True)
             serializer.is_valid(raise_exception=True)
             serializer.save()
-            return JsonResponse(serializer.data)
+            return JsonResponse(serializer.data.get("gameSettings")["betPrice"])
         
     
+    @extend_schema(request=PrizeCalculationSerializer, responses=PrizeCalculationSerializer)
     @action(detail=True, methods=["get", "patch"], url_path="prize-calculation")
     def chunk_prize_calculation(self, request, pk=None):
         if(request.method == 'GET'):
             company_game = get_object_or_404(self.queryset, pk=pk)
             prize_calculation = company_game.gameSettings["prizeCalculation"]
-            return JsonResponse(prize_calculation, status=status.HTTP_200_OK, safe=False)
+            return JsonResponse(prize_calculation, status=status.HTTP_200_OK)
         
         if(request.method == 'PATCH'):
             instance = get_object_or_404(self.queryset, pk=pk)
+            prize_calculation = PrizeCalculationSerializer(data=request.data)
+            prize_calculation.is_valid(raise_exception=True)
+
             instance.gameSettings["prizeCalculation"] = request.data
             serializer = self.serializer_class(instance, data=instance.gameSettings["prizeCalculation"], partial=True)
             serializer.is_valid(raise_exception=True)
             serializer.save()
-            return JsonResponse(serializer.data)
+            return JsonResponse(serializer.data.get("gameSettings")["prizeCalculation"])
     
     
+    @extend_schema(request=BetLimitsSerializer, responses=BetLimitsSerializer)
     @action(detail=True, methods=["get", "patch"], url_path="bet-limits")
     def chunk_bet_limits(self, request, pk=None):
+        print(request)
         if(request.method == 'GET'):
             company_game = get_object_or_404(self.queryset, pk=pk)
             bet_limits = company_game.gameSettings["betLimits"]
-            return JsonResponse(bet_limits, status=status.HTTP_200_OK, safe=False)
+            return JsonResponse(bet_limits, status=status.HTTP_200_OK)
         
         if(request.method == 'PATCH'):
             instance = get_object_or_404(self.queryset, pk=pk)
+            betLimitsSerializer = BetLimitsSerializer(data=request.data)
+            betLimitsSerializer.is_valid(raise_exception=True)
+            
             instance.gameSettings["betLimits"] = request.data
             serializer = self.serializer_class(instance, data=instance.gameSettings["betLimits"], partial=True)
             serializer.is_valid(raise_exception=True)
             serializer.save()
-            return JsonResponse(serializer.data)
+            return JsonResponse(serializer.data.get("gameSettings")["betLimits"])
         
         
+    @extend_schema(request=StoreLimitsSerializer, responses=StoreLimitsSerializer)
     @action(detail=True, methods=["get", "patch"], url_path="store-limits")
     def chunk_store_limits(self, request, pk=None):
         if(request.method == 'GET'):
             company_game = get_object_or_404(self.queryset, pk=pk)
             store_limits = company_game.storeSettings["storeLimits"]
-            return JsonResponse(store_limits, status=status.HTTP_200_OK, safe=False)
+            return JsonResponse(store_limits, status=status.HTTP_200_OK)
         
         if(request.method == 'PATCH'):
             instance = get_object_or_404(self.queryset, pk=pk)
+            storeLimitsSerializer = StoreLimitsSerializer(data=request.data)
+            storeLimitsSerializer.is_valid(raise_exception=True)   
+
             instance.storeSettings["storeLimits"] = request.data
             serializer = self.serializer_class(instance, data=instance.storeSettings["storeLimits"], partial=True)
             serializer.is_valid(raise_exception=True)
             serializer.save()
-            return JsonResponse(serializer.data)
+            return JsonResponse(serializer.data.get("storeSettings")["storeLimits"])
         
     
     @action(detail=True, methods=["get", "patch"], url_path="deck-limits")
@@ -169,7 +186,7 @@ class CompanyGameViewSet(BaseViewSet):
         if(request.method == 'GET'):
             company_game = get_object_or_404(self.queryset, pk=pk)
             deck_limits = company_game.storeSettings["deckLimits"]
-            return JsonResponse(deck_limits, status=status.HTTP_200_OK, safe=False)
+            return JsonResponse(deck_limits, status=status.HTTP_200_OK)
         
         if(request.method == 'PATCH'):
             instance = get_object_or_404(self.queryset, pk=pk)

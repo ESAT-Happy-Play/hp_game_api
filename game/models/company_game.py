@@ -31,8 +31,7 @@ class CompanyGame(models.Model):
     
         "storeLimits":{
             "maxUnitsPrice": int,
-            "maxUnitsRegular": int,
-            "maxUnitsPowerWin": int,
+            "maxUnits": int,
             "maxFavorites": int,
             "hotCombinationsRange": int,
             "hotCombinationsRefreshUnits": int
