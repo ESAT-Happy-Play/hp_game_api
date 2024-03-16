@@ -5,8 +5,7 @@ class CloseDateSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = CloseDate
 		fields = '__all__'
-            
-        
+
 class CloseDateCreateSerializer(CloseDateSerializer):
     class Meta:
         model = CloseDate
@@ -15,4 +14,4 @@ class CloseDateCreateSerializer(CloseDateSerializer):
 class CloseDateUpdateSerializer(CloseDateSerializer):
     class Meta:
         model = CloseDate
-        fields = ('status',)
+        fields = ('status', 'game')
