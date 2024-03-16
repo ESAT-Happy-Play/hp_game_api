@@ -146,5 +146,37 @@ class CompanyGameViewSet(BaseViewSet):
             serializer.is_valid(raise_exception=True)
             serializer.save()
             return JsonResponse(serializer.data)
+        
+        
+    @action(detail=True, methods=["get", "patch"], url_path="store-limits")
+    def chunk_store_limits(self, request, pk=None):
+        if(request.method == 'GET'):
+            company_game = get_object_or_404(self.queryset, pk=pk)
+            store_limits = company_game.storeSettings["storeLimits"]
+            return JsonResponse(store_limits, status=status.HTTP_200_OK, safe=False)
+        
+        if(request.method == 'PATCH'):
+            instance = get_object_or_404(self.queryset, pk=pk)
+            instance.storeSettings["storeLimits"] = request.data
+            serializer = self.serializer_class(instance, data=instance.storeSettings["storeLimits"], partial=True)
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
+            return JsonResponse(serializer.data)
+        
+    
+    @action(detail=True, methods=["get", "patch"], url_path="deck-limits")
+    def chunk_deck_limits(self, request, pk=None):
+        if(request.method == 'GET'):
+            company_game = get_object_or_404(self.queryset, pk=pk)
+            deck_limits = company_game.storeSettings["deckLimits"]
+            return JsonResponse(deck_limits, status=status.HTTP_200_OK, safe=False)
+        
+        if(request.method == 'PATCH'):
+            instance = get_object_or_404(self.queryset, pk=pk)
+            instance.storeSettings["deckLimits"] = request.data
+            serializer = self.serializer_class(instance, data=instance.storeSettings["deckLimits"], partial=True)
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
+            return JsonResponse(serializer.data)
     
     
