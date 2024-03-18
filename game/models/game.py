@@ -1,10 +1,17 @@
 from django.db import models
 
 class Game(models.Model):
-    """Model definition for Game."""
+    """Model definition for Game.
+    GameMechanics Structure:{
+        "isParent": bool,
+        "parentId": int,
+        "nCards": int,
+        "nSuites": int
+    }
+    """
 
     def game_mechanics_default():
-        return {"n_cards": 3, "n_suites": None}
+        return {"nCards": 3, "nSuites": None}
 
     name = models.CharField(max_length=100)
     gameMechanics = models.JSONField("GameMechanics", default=game_mechanics_default)
