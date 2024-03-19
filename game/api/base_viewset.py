@@ -46,5 +46,3 @@ class BaseViewSet(viewsets.ViewSet):
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return JsonResponse(serializer.data)
-    
-

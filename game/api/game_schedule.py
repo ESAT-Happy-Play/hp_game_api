@@ -8,6 +8,7 @@ from django.shortcuts import get_object_or_404
 from django.db.models import Count, Sum
 from drf_spectacular.utils import extend_schema, OpenApiParameter
 import uuid
+from django.db.models import Max
 
 class GameScheduleViewSet(BaseViewSet):
     queryset = GameSchedule.objects.all()
@@ -74,4 +75,42 @@ class GameScheduleViewSet(BaseViewSet):
         total_amount = bet_items.aggregate(Sum('amount'))['amount__sum'] or 0
 
         data = {'total_bet_amount': total_amount}
+        return JsonResponse(data, status=status.HTTP_200_OK)
+
+    @extend_schema(parameters=[
+        OpenApiParameter(name='companyId', description='company id', type=str),
+        OpenApiParameter(name='gameDrawType', description='game draw type id', type=int),
+        OpenApiParameter(name='companyGame', description='company game id', type=int),
+    ],
+    operation_id='latest-game-schedule')
+    @action(detail=False, methods=['get'], url_path='latest-date')
+    def latest_date(self, request):
+        """
+        Get the latest game schedule date for a given companyId, gameDrawType, and companyGame.
+        """
+        company_id = request.query_params.get('companyId')
+        game_draw_type_id = request.query_params.get('gameDrawType')
+        company_game_id = request.query_params.get('companyGame')
+
+        if not all([company_id, game_draw_type_id, company_game_id]):
+            return JsonResponse({"error": "companyId, gameDrawType, and companyGame are required parameters"}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            company_id = uuid.UUID(company_id)
+            game_draw_type_id = int(game_draw_type_id)
+            company_game_id = int(company_game_id)
+        except ValueError:
+            return JsonResponse({"error": "Invalid UUID or integer format for parameters"}, status=status.HTTP_400_BAD_REQUEST)
+
+        latest_date = GameSchedule.objects.filter(
+            companyId=company_id,
+            gameDrawType_id=game_draw_type_id,
+            companyGame_id=company_game_id,
+            isDeleted=False
+        ).aggregate(latest_date=Max('date'))['latest_date']
+
+        if latest_date is None:
+            return JsonResponse({"error": "No matching records found"}, status=status.HTTP_404_NOT_FOUND)
+
+        data = {'latest_date': latest_date}
         return JsonResponse(data, status=status.HTTP_200_OK)
