@@ -9,6 +9,7 @@ from django.db.models import Count, Sum
 from drf_spectacular.utils import extend_schema, OpenApiParameter
 import uuid
 from django.db.models import Max
+from datetime import datetime, timedelta
 
 class GameScheduleViewSet(BaseViewSet):
     queryset = GameSchedule.objects.all()
@@ -110,7 +111,12 @@ class GameScheduleViewSet(BaseViewSet):
         ).aggregate(latest_date=Max('date'))['latest_date']
 
         if latest_date is None:
-            return JsonResponse({"error": "No matching records found"}, status=status.HTTP_404_NOT_FOUND)
+            # return yesterday as last schedule
+            today = datetime.now()
+            yesterday = today - timedelta(days=1)
+            formatted_yesterday = yesterday.strftime('%Y-%m-%d') # format the date as 'YYYY-MM-DD'
+            data = {'latest_date': formatted_yesterday}
+            return JsonResponse(data, status=status.HTTP_200_OK)
 
         data = {'latest_date': latest_date}
         return JsonResponse(data, status=status.HTTP_200_OK)
