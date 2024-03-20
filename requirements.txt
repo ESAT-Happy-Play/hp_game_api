@@ -9,3 +9,4 @@ python-dotenv
 django-rest-swagger
 drf-spectacular
 djangorestframework_simplejwt
+django-debug-toolbar

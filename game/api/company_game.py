@@ -1,4 +1,4 @@
-from game.serializers import CompanyGameSerializer, GameScheduleSerializer, CompanyGameCreateSerializer, CompanyGameUpdateSerializer, BetLimitsSerializer, PrizeCalculationSerializer, BetPriceSerializer, StoreLimitsSerializer, DeckLimitsSerializer
+from game.serializers import BaseCompanyGameSerializer, GameScheduleSerializer, CompanyGameCreateSerializer, CompanyGameUpdateSerializer, BetLimitsSerializer, PrizeCalculationSerializer, BetPriceSerializer, StoreLimitsSerializer, DeckLimitsSerializer, CompanyGameListSerializer
 from game.models import CompanyGame, GameSchedule
 from .base_viewset import BaseViewSet
 from rest_framework import status
@@ -11,9 +11,10 @@ import uuid
 
 class CompanyGameViewSet(BaseViewSet):
     queryset = CompanyGame.objects.filter(isDeleted=False)
-    serializer_class = CompanyGameSerializer
+    serializer_class = BaseCompanyGameSerializer
 
-    @extend_schema(parameters=[OpenApiParameter(name='companyId', description='companyId filter', type=str)])
+    @extend_schema(parameters=[OpenApiParameter(name='companyId', description='companyId filter', type=str)],
+                   responses=CompanyGameListSerializer)
     def list(self, request):
         queryset = self.queryset
         company_id = self.request.query_params.get('companyId', None)
@@ -24,13 +25,16 @@ class CompanyGameViewSet(BaseViewSet):
             except ValueError:
                 return JsonResponse({"error": "Invalid UUID format for companyId"}, status=status.HTTP_400_BAD_REQUEST)
 
-        serializer = self.serializer_class(queryset, many=True)
+        serializer = CompanyGameListSerializer(queryset, many=True)
         return JsonResponse(serializer.data, status=status.HTTP_200_OK, safe=False)
         
 
-    @extend_schema(request=CompanyGameCreateSerializer)
+    @extend_schema(request=CompanyGameCreateSerializer, responses=CompanyGameCreateSerializer)
     def create(self, request):
-        return super().create(request)
+        serializer = CompanyGameCreateSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return JsonResponse(serializer.data, status=status.HTTP_201_CREATED)
 
 
     @extend_schema(request=CompanyGameUpdateSerializer)
@@ -56,7 +60,7 @@ class CompanyGameViewSet(BaseViewSet):
 
 
     @action(detail=True, methods=["get"], url_path="draw/current")
-    def get_draw_current(self, pk=None):
+    def get_draw_current(self, request, pk=None):
         company_game = get_object_or_404(self.queryset, pk=pk)
         current_time = datetime.now().time()
         current_date = datetime.now().date()
@@ -69,7 +73,7 @@ class CompanyGameViewSet(BaseViewSet):
     
 
     @action(detail=True, methods=["get"], url_path="draw/next")
-    def get_draw_next(self, pk=None):
+    def get_draw_next(self, request, pk=None):
         company_game = get_object_or_404(self.queryset, pk=pk)
         current_time = datetime.now().time()
         current_date = datetime.now().date()
@@ -82,7 +86,7 @@ class CompanyGameViewSet(BaseViewSet):
 
 
     @action(detail=True, methods=["get"], url_path="draw/backlogs")
-    def get_draw_backlogs(self, pk=None):
+    def get_draw_backlogs(self, request, pk=None):
         company_game = get_object_or_404(self.queryset, pk=pk)
         current_date = datetime.now().date()
         backlogs = GameSchedule.objects.filter(companyGame=company_game, status=0, date__lte=current_date, gameDrawType__drawTime__lte=(datetime.now()-timedelta(minutes=5)), isDeleted=False)
@@ -91,7 +95,7 @@ class CompanyGameViewSet(BaseViewSet):
 
 
     @action(detail=True, methods=["get"], url_path="schedules")
-    def get_company_game_schedules(self, pk=None):
+    def get_company_game_schedules(self, request, pk=None):
         company_game = get_object_or_404(self.queryset, pk=pk)
         schedules = GameSchedule.objects.filter(companyGame=company_game, isDeleted=False)
         schedules_serializer = GameScheduleSerializer(schedules, many=True)
