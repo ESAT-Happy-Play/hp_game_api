@@ -14,4 +14,4 @@ class BetTransaction(models.Model):
 
   def __str__(self):
     """Unicode representation of BetTransaction."""
-    return "<Bet Transaction Id: {self.id}>"
+    return f"<Bet Transaction Id: {self.id}>"

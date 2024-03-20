@@ -29,6 +29,7 @@ urlpatterns = [
   path('', include(router.urls)),
   path('schema/', SpectacularAPIView.as_view(),name='schema'),
   path('swagger/', SpectacularSwaggerView.as_view(),name='schema-swagger-ui'),
+  path("__debug__/", include("debug_toolbar.urls")),
 ]
 
 if settings.DEBUG:

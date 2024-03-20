@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'rest_framework_swagger',
     'rest_framework',
     'drf_spectacular',
+    "debug_toolbar",
 ]
 
 MIDDLEWARE = [
@@ -56,6 +57,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    "debug_toolbar.middleware.DebugToolbarMiddleware",
 ]
 
 ROOT_URLCONF = 'HPGameApi.urls'
@@ -93,8 +95,14 @@ SPECTACULAR_SETTINGS = {
 SIMPLE_JWT = {
       "SIGNING_KEY": bytes(SECRET_KEY, 'utf-8'),
       "ISSUER": os.environ.get('JWT_ISSUER'),
-      "AUDIENCE": os.environ.get('JWT_AUDIENCE')
+      "AUDIENCE": os.environ.get('JWT_AUDIENCE'),
 }
+
+INTERNAL_IPS = [
+    # ...
+    "127.0.0.1",
+    # ...
+]
 
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases

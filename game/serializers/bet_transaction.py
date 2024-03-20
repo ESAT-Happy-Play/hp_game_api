@@ -1,13 +1,38 @@
 from rest_framework import serializers
-from game.models import BetTransaction
+from game.models import BetTransaction, BetItem, CompanyGame, GameSchedule
+from .bet_item import BetItemTransactionCreateSerializer, BetItemSerializer
+from .company_game import CompanyGameSerializer
+from .game_schedule import GameScheduleSerializer
 
 class BetTransactionSerializer(serializers.ModelSerializer):
-	class Meta:
-		model = BetTransaction
-		fields = '__all__'
-		
-		
-class BetTransactionCreateSerializer(BetTransactionSerializer):
+    betItems = BetItemSerializer(read_only=True, many=True)
     class Meta:
         model = BetTransaction
-        exclude = ('isDeleted', 'transactionNumber')
+        fields = '__all__'
+
+		
+class BetTransactionCreateSerializer(BetTransactionSerializer):
+    betItems = BetItemTransactionCreateSerializer(many=True)
+    companyGame= serializers.IntegerField()
+    gameSchedule= serializers.IntegerField()
+    class Meta:
+        model = BetTransaction
+        fields = ('betItems', 'orderId','totalAmount','dateOfTransaction','accountId','betType','companyGame','gameSchedule', 'transactionNumber', 'numberOfBets')
+
+    def create(self, validated_data):
+        betItem_data = validated_data.pop('betItems')
+        company_game = CompanyGame.objects.filter(pk=validated_data.pop('companyGame')).first()
+        game_schedule = GameSchedule.objects.filter(pk=validated_data.pop('gameSchedule')).first()
+        betTransaction = BetTransaction.objects.create(**validated_data)
+        betItemsList = [BetItem(**item, transactionType=validated_data["betType"], transactionDate=validated_data["dateOfTransaction"],
+                betTransaction=betTransaction, gameSchedule=game_schedule, companyGame=company_game) for item in betItem_data]
+        betItems = BetItem.objects.bulk_create(betItemsList)
+        return BetTransactionSerializer(betTransaction).data
+    
+    def append_attr(self, item, companyGame, gameSchedule):
+        company_game = CompanyGame.objects.filter(pk=companyGame).first()
+        game_schedule = GameSchedule.objects.filter(pk=gameSchedule).first()
+        item['companyGame'] = company_game
+        item['gameSchedule'] = game_schedule
+        return item
+		

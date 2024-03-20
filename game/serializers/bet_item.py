@@ -11,4 +11,9 @@ class BetItemCreateSerializer(BetItemSerializer):
     class Meta:
         model = BetItem
         exclude = ('isDeleted',)
+        
+class BetItemTransactionCreateSerializer(BetItemSerializer):
+    class Meta:
+        model = BetItem
+        exclude = ('isDeleted','betTransaction', 'transactionType', 'transactionDate', 'companyGame', 'gameSchedule')
 		
