@@ -7,7 +7,7 @@ from django.http import JsonResponse
 from rest_framework import status
 
 class BetTransactionViewSet(BaseViewSet):
-    queryset = BetTransaction.objects.filter(isDeleted=False).prefetch_related('betItem').all()
+    queryset = BetTransaction.objects.filter(isDeleted=False).prefetch_related('betItems').all()
     serializer_class = BetTransactionSerializer
 
     @extend_schema(request=BetTransactionCreateSerializer, responses=BetTransactionSerializer)
