@@ -30,7 +30,7 @@ class DrawResultViewSet(BaseViewSet):
         bets = BetItem.objects.filter(isDeleted=False, gameSchedule=game_schedule).all()
         winner_list = bets.filter(value=request.data['result']).all()
 
-        if 'quasiWinner' in company_game.gameSettings and company_game.gameSettings['quasiWinner'] == True:
+        if company_game.gameSettings['prizeCalculation']['enableQuasi'] == True:
             result_digits = sorted(request.data['result'].split('-'))
             
             quasi_winners = [bet for bet in bets.exclude(value=request.data['result']) if bet.bet_list() == result_digits]
@@ -49,7 +49,7 @@ class DrawResultViewSet(BaseViewSet):
         #creation of winner entities
         for winner in winner_list:
             win_amount=0
-            if company_game.gameSettings["isRegular"]:
+            if 'winningMult' in company_game.gameSettings["prizeCalculation"]:
                 win_amount=winner.amount*company_game.gameSettings["winningMult"]
 
             else:

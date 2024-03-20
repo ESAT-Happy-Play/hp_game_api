@@ -9,10 +9,11 @@ class BetItem(models.Model):
     value = models.CharField(max_length=20)
     orderItemId = models.BigIntegerField()
     amount = models.IntegerField()
-    betTransaction = models.ForeignKey(BetTransaction, related_name=("betItem"), on_delete=models.CASCADE)
-    companyGame = models.ForeignKey(CompanyGame, related_name=("betItem"), on_delete=models.CASCADE)
-    gameSchedule = models.ForeignKey(GameSchedule, related_name=("betItem"), on_delete=models.CASCADE)
+    transactionType = models.IntegerField()
     transactionDate = models.DateField()
+    betTransaction = models.ForeignKey(BetTransaction, related_name=("betItems"), on_delete=models.CASCADE)
+    companyGame = models.ForeignKey(CompanyGame, related_name=("betItems"), on_delete=models.CASCADE)
+    gameSchedule = models.ForeignKey(GameSchedule, related_name=("betItems"), on_delete=models.CASCADE)
     isDeleted = models.BooleanField(default=False)
 
     def bet_list(self):
@@ -20,4 +21,4 @@ class BetItem(models.Model):
     
     def __str__(self):
         """Unicode representation of BetItem."""
-        return "<BetItem Id: {self.id}>"
+        return f"<BetItem Id: {self.id}>"
