@@ -28,11 +28,3 @@ class BetTransactionCreateSerializer(BetTransactionSerializer):
                 betTransaction=betTransaction, gameSchedule=game_schedule, companyGame=company_game) for item in betItem_data]
         betItems = BetItem.objects.bulk_create(betItemsList)
         return BetTransactionSerializer(betTransaction).data
-    
-    def append_attr(self, item, companyGame, gameSchedule):
-        company_game = CompanyGame.objects.filter(pk=companyGame).first()
-        game_schedule = GameSchedule.objects.filter(pk=gameSchedule).first()
-        item['companyGame'] = company_game
-        item['gameSchedule'] = game_schedule
-        return item
-		
