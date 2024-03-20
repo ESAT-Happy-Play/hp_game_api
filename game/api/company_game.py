@@ -143,7 +143,6 @@ class CompanyGameViewSet(BaseViewSet):
     @extend_schema(request=BetLimitsSerializer, responses=BetLimitsSerializer)
     @action(detail=True, methods=["get", "patch"], url_path="bet-limits")
     def chunk_bet_limits(self, request, pk=None):
-        print(request)
         if(request.method == 'GET'):
             company_game = get_object_or_404(self.queryset, pk=pk)
             bet_limits = company_game.gameSettings["betLimits"]

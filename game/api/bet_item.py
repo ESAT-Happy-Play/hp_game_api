@@ -33,7 +33,6 @@ class BetItemViewSet(BaseViewSet):
         if 'companyGame' in request.query_params:
             filters['companyGame'] = request.query_params.get('companyGame')
             
-        print(filters)
         instance = self.queryset.select_related('betTransaction').filter(**filters)
         serializer = self.serializer_class(instance, many=True)
 
