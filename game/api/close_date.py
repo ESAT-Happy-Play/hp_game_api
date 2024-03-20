@@ -16,6 +16,7 @@ class CloseDateViewSet(BaseViewSet):
     @extend_schema(parameters=[
         OpenApiParameter(name='includeIsDeleted', description='isDeleted filter', type=bool),
         OpenApiParameter(name='status', description='status filter', type=int),
+        OpenApiParameter(name='gameDrawType', description='game draw type filter', type=int),
         OpenApiParameter(name='startDate', description='start date for date range filter: YYYY-MM-DD', type=str),
         OpenApiParameter(name='endDate', description='end date for date range filter: YYYY-MM-DD', type=str),
         OpenApiParameter(name='gameId', description='Game ID', type=int, location=OpenApiParameter.PATH),
@@ -24,6 +25,7 @@ class CloseDateViewSet(BaseViewSet):
     @action(detail=False, methods=['get'], url_path='(?P<companyId>[^/.]+)/(?P<gameId>[^/.]+)')
     def closed_date_list(self, request, companyId=None, gameId=None):
         include_is_deleted = request.query_params.get('includeIsDeleted', 'true').lower() == 'true'
+        game_draw_type_filter = self.request.query_params.get('gameDrawType', None)
         status_filter = self.request.query_params.get('status', None)
         start_date_str = request.query_params.get('startDate', None)
         end_date_str = request.query_params.get('endDate', None)
@@ -32,6 +34,9 @@ class CloseDateViewSet(BaseViewSet):
 
         if not include_is_deleted:
             queryset = self.queryset.filter(isDeleted=False)
+
+        if game_draw_type_filter:
+            queryset = queryset.filter(closedDrawType=game_draw_type_filter)
 
         if status_filter:
             queryset = queryset.filter(status=status_filter)
