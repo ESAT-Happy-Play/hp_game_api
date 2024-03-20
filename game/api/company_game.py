@@ -1,4 +1,4 @@
-from game.serializers import CompanyGameSerializer, GameScheduleSerializer, CompanyGameCreateSerializer, CompanyGameUpdateSerializer, BetLimitsSerializer, PrizeCalculationSerializer, BetPriceSerializer, StoreLimitsSerializer, DeckLimitsSerializer
+from game.serializers import BaseCompanyGameSerializer, GameScheduleSerializer, CompanyGameCreateSerializer, CompanyGameUpdateSerializer, BetLimitsSerializer, PrizeCalculationSerializer, BetPriceSerializer, StoreLimitsSerializer, DeckLimitsSerializer, CompanyGameListSerializer
 from game.models import CompanyGame, GameSchedule
 from .base_viewset import BaseViewSet
 from rest_framework import status
@@ -11,9 +11,10 @@ import uuid
 
 class CompanyGameViewSet(BaseViewSet):
     queryset = CompanyGame.objects.filter(isDeleted=False)
-    serializer_class = CompanyGameSerializer
+    serializer_class = BaseCompanyGameSerializer
 
-    @extend_schema(parameters=[OpenApiParameter(name='companyId', description='companyId filter', type=str)])
+    @extend_schema(parameters=[OpenApiParameter(name='companyId', description='companyId filter', type=str)],
+                   responses=CompanyGameListSerializer)
     def list(self, request):
         queryset = self.queryset
         company_id = self.request.query_params.get('companyId', None)
@@ -24,13 +25,16 @@ class CompanyGameViewSet(BaseViewSet):
             except ValueError:
                 return JsonResponse({"error": "Invalid UUID format for companyId"}, status=status.HTTP_400_BAD_REQUEST)
 
-        serializer = self.serializer_class(queryset, many=True)
+        serializer = CompanyGameListSerializer(queryset, many=True)
         return JsonResponse(serializer.data, status=status.HTTP_200_OK, safe=False)
         
 
-    @extend_schema(request=CompanyGameCreateSerializer)
+    @extend_schema(request=CompanyGameCreateSerializer, responses=CompanyGameCreateSerializer)
     def create(self, request):
-        return super().create(request)
+        serializer = CompanyGameCreateSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return JsonResponse(serializer.data, status=status.HTTP_201_CREATED)
 
 
     @extend_schema(request=CompanyGameUpdateSerializer)

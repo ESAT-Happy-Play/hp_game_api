@@ -1,8 +1,6 @@
 from rest_framework import serializers
 from game.models import BetTransaction, BetItem, CompanyGame, GameSchedule
 from .bet_item import BetItemTransactionCreateSerializer, BetItemSerializer
-from .company_game import CompanyGameSerializer
-from .game_schedule import GameScheduleSerializer
 
 class BetTransactionSerializer(serializers.ModelSerializer):
     betItems = BetItemSerializer(read_only=True, many=True)
