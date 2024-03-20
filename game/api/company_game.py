@@ -56,7 +56,7 @@ class CompanyGameViewSet(BaseViewSet):
 
 
     @action(detail=True, methods=["get"], url_path="draw/current")
-    def get_draw_current(self, pk=None):
+    def get_draw_current(self, request, pk=None):
         company_game = get_object_or_404(self.queryset, pk=pk)
         current_time = datetime.now().time()
         current_date = datetime.now().date()
@@ -69,7 +69,7 @@ class CompanyGameViewSet(BaseViewSet):
     
 
     @action(detail=True, methods=["get"], url_path="draw/next")
-    def get_draw_next(self, pk=None):
+    def get_draw_next(self, request, pk=None):
         company_game = get_object_or_404(self.queryset, pk=pk)
         current_time = datetime.now().time()
         current_date = datetime.now().date()
@@ -82,7 +82,7 @@ class CompanyGameViewSet(BaseViewSet):
 
 
     @action(detail=True, methods=["get"], url_path="draw/backlogs")
-    def get_draw_backlogs(self, pk=None):
+    def get_draw_backlogs(self, request, pk=None):
         company_game = get_object_or_404(self.queryset, pk=pk)
         current_date = datetime.now().date()
         backlogs = GameSchedule.objects.filter(companyGame=company_game, status=0, date__lte=current_date, gameDrawType__drawTime__lte=(datetime.now()-timedelta(minutes=5)), isDeleted=False)
@@ -91,7 +91,7 @@ class CompanyGameViewSet(BaseViewSet):
 
 
     @action(detail=True, methods=["get"], url_path="schedules")
-    def get_company_game_schedules(self, pk=None):
+    def get_company_game_schedules(self, request, pk=None):
         company_game = get_object_or_404(self.queryset, pk=pk)
         schedules = GameSchedule.objects.filter(companyGame=company_game, isDeleted=False)
         schedules_serializer = GameScheduleSerializer(schedules, many=True)
