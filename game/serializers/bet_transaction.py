@@ -36,3 +36,5 @@ class BetTransactionPageListSerializer(BetTransactionSerializer):
 class TransactionPaginationSerializer(serializers.Serializer):
     size = serializers.IntegerField()
     start = serializers.IntegerField()
+    start_date = serializers.DateField(required=False)
+    end_date = serializers.DateField(required=False)

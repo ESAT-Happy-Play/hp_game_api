@@ -38,9 +38,16 @@ class BetTransactionViewSet(BaseViewSet):
     @extend_schema(request=TransactionPaginationSerializer, responses=TransactionPaginationSerializer)
     @action(detail=False, methods=['post'], url_path='list')
     def paginated_list(self,request):
-        size = request.data.pop('size')
-        start = request.data.pop('start')
-        queryset = self.queryset
+        size = request.data.get('size')
+        start = request.data.get('start')
+        filters = {}
+        if 'start_date' in request.data:
+            filters['dateOfTransaction__gte'] = request.data.get('start_date')
+            
+        if 'end_date' in request.data:
+            filters['dateOfTransaction__lte'] = request.data.get('end_date')
+
+        queryset = self.queryset.filter(**filters)
         total = queryset.count()
         data = queryset[start:start+size]
         serializer = BetTransactionPageListSerializer(data, many=True)
