@@ -9,7 +9,6 @@ class BetItem(models.Model):
     value = models.CharField(max_length=20)
     orderItemId = models.BigIntegerField()
     amount = models.IntegerField()
-    transactionType = models.IntegerField()
     transactionDate = models.DateField()
     betTransaction = models.ForeignKey(BetTransaction, related_name=("betItems"), on_delete=models.CASCADE)
     companyGame = models.ForeignKey(CompanyGame, related_name=("betItems"), on_delete=models.CASCADE)
