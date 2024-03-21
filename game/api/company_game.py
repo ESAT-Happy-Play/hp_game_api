@@ -1,4 +1,4 @@
-from game.serializers import BaseCompanyGameSerializer, GameScheduleSerializer, CompanyGameCreateSerializer, CompanyGameUpdateSerializer, BetLimitsSerializer, PrizeCalculationSerializer, BetPriceSerializer, StoreLimitsSerializer, DeckLimitsSerializer, CompanyGameListSerializer
+from game.serializers import BaseCompanyGameSerializer, GameScheduleSerializer, CompanyGameCreateSerializer, CompanyGameUpdateSerializer, BetLimitsSerializer, PrizeCalculationSerializer, BetPriceSerializer, StoreLimitsSerializer, DeckLimitsSerializer, CompanyGameListSerializer, GameScheduleBetsSerializer
 from game.models import CompanyGame, GameSchedule
 from .base_viewset import BaseViewSet
 from rest_framework import status
@@ -51,11 +51,11 @@ class CompanyGameViewSet(BaseViewSet):
         company_game = get_object_or_404(self.queryset, pk=pk)
         current_time = datetime.now().time()
         current_date = datetime.now().date()
-        types = GameSchedule.objects.filter(date=current_date, companyGame=company_game, gameDrawType__openSchedule__lte=current_time, gameDrawType__endCutOff__gte=current_time).first()
+        types = GameSchedule.objects.filter(date=current_date, companyGame=company_game, openSchedule__lte=current_time, gameDrawType__drawTime__gte=current_time).first()
         if types == None:
             return JsonResponse({"details": "No open bet schedule yet"}, status=status.HTTP_404_NOT_FOUND)
         
-        type_serializer = GameScheduleSerializer(types)
+        type_serializer = GameScheduleBetsSerializer(types)
         return JsonResponse(type_serializer.data, status=status.HTTP_200_OK)
 
 
