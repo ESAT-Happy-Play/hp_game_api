@@ -90,10 +90,21 @@ class CompanyGameViewSet(BaseViewSet):
         return JsonResponse(backlogs_serializer.data, status=status.HTTP_200_OK, safe=False)
 
 
+
+    @extend_schema(parameters=[
+        OpenApiParameter(name='date', description='schedule date', type=datetime),
+        OpenApiParameter(name='status', description='schedule status', type=str)])
     @action(detail=True, methods=["get"], url_path="schedules")
-    def get_company_game_schedules(self, pk=None):
+    def get_company_game_schedules(self, request, pk=None):
         company_game = get_object_or_404(self.queryset, pk=pk)
-        schedules = GameSchedule.objects.filter(companyGame=company_game, isDeleted=False)
+        filters={}
+        if 'date' in request.query_params:
+            filters['date'] = request.query_params.get('date')
+            
+        if 'status' in request.query_params:
+            filters['status'] = request.query_params.get('status')
+
+        schedules = GameSchedule.objects.filter(companyGame=company_game, isDeleted=False, **filters)
         schedules_serializer = GameScheduleSerializer(schedules, many=True)
         return JsonResponse(schedules_serializer.data, status=status.HTTP_200_OK, safe=False)
     
