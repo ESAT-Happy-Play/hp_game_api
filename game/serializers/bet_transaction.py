@@ -22,7 +22,17 @@ class BetTransactionCreateSerializer(BetTransactionSerializer):
         company_game = CompanyGame.objects.filter(pk=validated_data.pop('companyGame')).first()
         game_schedule = GameSchedule.objects.filter(pk=validated_data.pop('gameSchedule')).first()
         betTransaction = BetTransaction.objects.create(**validated_data)
-        betItemsList = [BetItem(**item,  transactionDate=validated_data["dateOfTransaction"],
+        betItemsList = [BetItem(**item,transactionDate=validated_data["dateOfTransaction"],
                 betTransaction=betTransaction, gameSchedule=game_schedule, companyGame=company_game) for item in betItem_data]
         betItems = BetItem.objects.bulk_create(betItemsList)
         return BetTransactionSerializer(betTransaction).data
+    
+
+class BetTransactionPageListSerializer(BetTransactionSerializer):
+    class Meta:
+        model = BetTransaction
+        fields = ('betItems', 'totalAmount','dateOfTransaction','accountId','betType','transactionNumber', 'numberOfBets')
+
+class TransactionPaginationSerializer(serializers.Serializer):
+    size = serializers.IntegerField()
+    start = serializers.IntegerField()
