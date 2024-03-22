@@ -44,6 +44,7 @@ class GameScheduleViewSet(BaseViewSet):
         game_draw_type = get_object_or_404(GameDrawType, pk=game_draw_type_pk, isDeleted=False)
         request.data['openSchedule'] = game_draw_type.openSchedule
         request.data['endCutOff'] = game_draw_type.endCutOff
+        request.data['drawTime'] = game_draw_type.drawTime
         return super().create(request)
 
     @action(detail=True, methods=['get'], url_path='combination-percentage')
