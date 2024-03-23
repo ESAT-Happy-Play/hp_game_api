@@ -10,7 +10,7 @@ class GameScheduleSerializer(serializers.ModelSerializer):
 class GameScheduleCreateSerializer(GameScheduleSerializer):
   class Meta:
     model = GameSchedule
-    exclude = ('openSchedule', 'endCutOff', 'isDeleted')
+    exclude = ('openSchedule', 'endCutOff', 'isDeleted', 'drawTime')
 
 class GameScheduleBetsSerializer(GameScheduleSerializer):
   openForBetting = serializers.SerializerMethodField('isOpen')

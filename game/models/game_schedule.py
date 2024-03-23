@@ -9,6 +9,7 @@ class GameSchedule(models.Model):
   gameDrawType = models.ForeignKey(GameDrawType, related_name=("gameSchedule"), on_delete=models.CASCADE)
   companyGame = models.ForeignKey(CompanyGame, related_name=("gameSchedule"), on_delete=models.CASCADE)
   date = models.DateField()
+  drawTime = models.TimeField()
   openSchedule = models.TimeField()
   endCutOff = models.TimeField()
   status = models.IntegerField() # 0-not yet drawn, 1-drawn
