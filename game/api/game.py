@@ -1,7 +1,7 @@
 from game.serializers import GameSerializer, GameCreateSerializer
 from game.models import Game
 from .base_viewset import BaseViewSet
-from drf_spectacular.utils import extend_schema
+from drf_spectacular.utils import extend_schema, OpenApiParameter
 from rest_framework.decorators import action
 from django.shortcuts import get_object_or_404
 from rest_framework import status
@@ -17,8 +17,11 @@ class GameViewSet(BaseViewSet):
   def create(self, request):
     return super().create(request)
 
+  @extend_schema(parameters=[
+        OpenApiParameter(name='numPicks', description='number of lucky-pick/s to generate', type=int),
+    ])
   @action(detail=True, methods=["get"], url_path="lucky-pick")
-  def get_game_lucky_pick(self,request, pk=None):
+  def get_game_lucky_pick(self, request, pk=None):
       # NOTE: this is just the initial lucky pick logic, the lucky pick process is not a straight forward random picking but has its own business logic
       game = get_object_or_404(self.active_queryset, pk=pk)
       serializer = GameSerializer(game)
@@ -31,11 +34,16 @@ class GameViewSet(BaseViewSet):
       cards = ["A", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"]
       suites = ["H", "S", "D", "C"]
 
-      random_cards = '-'.join(random.choices(cards, k=n_cards))
-      if n_suites is not None:
-          random_suites = '-'.join(random.choices(suites, k=n_suites))
-          lucky_pick = f"{random_cards}-{random_suites}"
-      else:
-          lucky_pick = random_cards
+      number_of_picks = int(request.query_params.get('numPicks', 1))
 
-      return JsonResponse({"gameId": pk, "luckyPick": lucky_pick}, status=status.HTTP_200_OK)
+      lucky_picks = []
+      for _ in range(number_of_picks):
+          random_cards = '-'.join(random.choices(cards, k=n_cards))
+          if n_suites is not None and n_suites != 0:
+              random_suites = '-'.join(random.choices(suites, k=n_suites))
+              lucky_pick = f"{random_cards}-{random_suites}"
+          else:
+              lucky_pick = random_cards
+          lucky_picks.append(lucky_pick)
+
+      return JsonResponse({"gameId": pk, "luckyPicks": lucky_picks}, status=status.HTTP_200_OK)
