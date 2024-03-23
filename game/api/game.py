@@ -18,7 +18,7 @@ class GameViewSet(BaseViewSet):
     return super().create(request)
 
   @extend_schema(parameters=[
-        OpenApiParameter(name='numPicks', description='number of lucky-pick/s to generate', type=int),
+        OpenApiParameter(name='numPicks', description='number of lucky-pick/s to generate (default is 1)', type=int),
     ])
   @action(detail=True, methods=["get"], url_path="lucky-pick")
   def get_game_lucky_pick(self, request, pk=None):
