@@ -46,10 +46,14 @@ class BetTransactionViewSet(BaseViewSet):
             
         if 'end_date' in request.data:
             filters['dateOfTransaction__lte'] = request.data.get('end_date')
+            
+        if 'accountId' in request.data:
+            filters['accountId'] = request.data.get('accountId')
 
-        queryset = self.queryset.filter(**filters)
-        total = queryset.count()
-        data = queryset[start:start+size]
+        print(filters)
+        new_queryset = self.queryset.filter(**filters)
+        total = new_queryset.count()
+        data = new_queryset[start:start+size]
         serializer = BetTransactionPageListSerializer(data, many=True)
         # print(serializer.data)
         paginated_data = {"start":start+size, "total":total, "data":[]}
