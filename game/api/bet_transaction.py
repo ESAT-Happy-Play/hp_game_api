@@ -50,7 +50,6 @@ class BetTransactionViewSet(BaseViewSet):
         if 'accountId' in request.data:
             filters['accountId'] = request.data.get('accountId')
 
-        print(filters)
         new_queryset = self.queryset.filter(**filters)
         total = new_queryset.count()
         data = new_queryset[start:start+size]
