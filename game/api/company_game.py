@@ -104,7 +104,10 @@ class CompanyGameViewSet(BaseViewSet):
         filters={}
         if 'date' in request.query_params:
             filters['date'] = request.query_params.get('date')
-            
+
+        if 'gameDrawType' in request.query_params:
+            filters['gameDrawType'] = request.query_params.get('gameDrawType')
+
         if 'status' in request.query_params:
             filters['status'] = request.query_params.get('status')
 
