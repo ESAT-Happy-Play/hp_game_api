@@ -38,3 +38,4 @@ class TransactionPaginationSerializer(serializers.Serializer):
     start = serializers.IntegerField()
     start_date = serializers.DateField(required=False)
     end_date = serializers.DateField(required=False)
+    accountId = serializers.IntegerField(required=False)
