@@ -83,7 +83,6 @@ class DrawResultViewSet(BaseViewSet):
         serialized_game_schedule = game_schedule_serializer.data
 
         broadcast_body_params = {
-            "gameType": "hmmm",
             "gameSchedule": serialized_game_schedule,
             "value": request.data['result'],
             "enableQuasi": company_game.gameSettings['prizeCalculation']['enableQuasi']
