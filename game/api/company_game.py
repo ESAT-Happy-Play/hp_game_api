@@ -51,7 +51,7 @@ class CompanyGameViewSet(BaseViewSet):
         company_game = get_object_or_404(self.queryset, pk=pk)
         current_time = datetime.now().time()
         current_date = datetime.now().date()
-        types = GameSchedule.objects.filter(date=current_date, companyGame=company_game, openSchedule__lte=current_time, gameDrawType__drawTime__gte=current_time).first()
+        types = GameSchedule.objects.filter(date=current_date, companyGame=company_game, openSchedule__lte=current_time, drawTime__gte=current_time).first()
         if types == None:
             return JsonResponse({"details": "No open bet schedule yet"}, status=status.HTTP_404_NOT_FOUND)
         
