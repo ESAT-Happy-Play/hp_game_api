@@ -1,4 +1,4 @@
-from game.serializers import DrawResultSerializer, DrawResultCreateSerializer
+from game.serializers import DrawResultSerializer, DrawResultCreateSerializer, GameScheduleSerializer
 from .draw_result_winner import DrawResultWinnerViewSet
 from game.models import DrawResult, BetItem, PrizePool, GameSchedule, CompanyGame
 from drf_spectacular.utils import extend_schema
@@ -78,9 +78,18 @@ class DrawResultViewSet(BaseViewSet):
             }
             winner_view.create(quasi_request)
 
+        # game schedule data
+        game_schedule_serializer = GameScheduleSerializer(game_schedule)
+        serialized_game_schedule = game_schedule_serializer.data
+
+        broadcast_body_params = {
+            "gameSchedule": serialized_game_schedule,
+            "value": request.data['result'],
+            "enableQuasi": company_game.gameSettings['prizeCalculation']['enableQuasi']
+        }
 
         #broadcasting winners
-        requests.post(url=os.environ.get("SOCKET_SERVICE_URL")+"draw-result", data=request.data['result'])
+        requests.post(url=os.environ.get("SOCKET_SERVICE_URL")+"draw-result", json=broadcast_body_params)
 
 
         return JsonResponse(serializer.data, status=status.HTTP_201_CREATED)
