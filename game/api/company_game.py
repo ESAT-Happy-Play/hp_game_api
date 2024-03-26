@@ -18,6 +18,7 @@ class CompanyGameViewSet(BaseViewSet):
     def list(self, request):
         queryset = self.queryset
         company_id = self.request.query_params.get('companyId', None)
+        game_id = self.request.query_params.get('gameId', None)
         if company_id:
             try:
                 company_id = uuid.UUID(company_id)
@@ -25,6 +26,9 @@ class CompanyGameViewSet(BaseViewSet):
             except ValueError:
                 return JsonResponse({"error": "Invalid UUID format for companyId"}, status=status.HTTP_400_BAD_REQUEST)
 
+        if game_id:
+            queryset = queryset.filter(game__exact=game_id)
+            
         serializer = CompanyGameListSerializer(queryset, many=True)
         return JsonResponse(serializer.data, status=status.HTTP_200_OK, safe=False)
         
