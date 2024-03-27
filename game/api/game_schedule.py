@@ -1,5 +1,5 @@
 from game.serializers import GameScheduleSerializer, GameScheduleCreateSerializer
-from game.models import GameSchedule, BetItem, GameDrawType
+from game.models import GameSchedule, BetItem, GameDrawType, CompanyGame
 from .base_viewset import BaseViewSet
 from django.http import JsonResponse
 from rest_framework import status
@@ -121,3 +121,36 @@ class GameScheduleViewSet(BaseViewSet):
 
         data = {'latest_date': latest_date}
         return JsonResponse(data, status=status.HTTP_200_OK)
+    
+    
+    @extend_schema(parameters=[
+        OpenApiParameter(name='companyId', description='companyId', type=str)
+    ])
+    @action(detail=False, methods=['get'], url_path='company-current-bet')
+    def current_bets_company(self, request, pk=None):
+        """
+        Get all current bets in a company using companyId.
+        """
+        
+        company_id = request.query_params.get('companyId')
+        company_games = []
+        
+        if company_id:
+            try:
+                company_id = uuid.UUID(company_id)
+                company_games = CompanyGame.objects.filter(companyId__exact=company_id)
+            except ValueError:
+                return JsonResponse({"error": "Invalid UUID format for companyId"}, status=status.HTTP_400_BAD_REQUEST)
+        types = []
+        current_time = datetime.now().time()
+        current_date = datetime.now().date()
+        print(company_games)
+        for company_game in company_games:
+            print(company_game.pk)
+            current = GameSchedule.objects.filter(date=current_date, companyGame=company_game, openSchedule__lte=current_time, drawTime__gte=current_time).first()
+            print(current)
+            if current:
+                types.append(current)
+        type_serializer = GameScheduleSerializer(types, many=True)
+        return JsonResponse(type_serializer.data, status=status.HTTP_200_OK, safe=False)
+
