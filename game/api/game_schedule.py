@@ -144,11 +144,8 @@ class GameScheduleViewSet(BaseViewSet):
         types = []
         current_time = datetime.now().time()
         current_date = datetime.now().date()
-        print(company_games)
         for company_game in company_games:
-            print(company_game.pk)
             current = GameSchedule.objects.filter(date=current_date, companyGame=company_game, openSchedule__lte=current_time, drawTime__gte=current_time).first()
-            print(current)
             if current:
                 types.append(current)
         type_serializer = GameScheduleSerializer(types, many=True)
