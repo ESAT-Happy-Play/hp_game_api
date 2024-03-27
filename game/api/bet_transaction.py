@@ -54,7 +54,6 @@ class BetTransactionViewSet(BaseViewSet):
         total = new_queryset.count()
         data = new_queryset[start:start+size]
         serializer = BetTransactionPageListSerializer(data, many=True)
-        # print(serializer.data)
         paginated_data = {"start":start+size, "total":total, "data":[]}
         paginated_data['data']=serializer.data
         return Response(data=paginated_data, status=status.HTTP_200_OK)
