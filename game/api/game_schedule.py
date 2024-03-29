@@ -18,11 +18,17 @@ class GameScheduleViewSet(BaseViewSet):
 
     @extend_schema(parameters=[
         OpenApiParameter(name='companyId', description='companyId filter', type=str),
-        OpenApiParameter(name='includeIsDeleted', description='isDeleted filter', type=bool)
+        OpenApiParameter(name='includeIsDeleted', description='isDeleted filter', type=bool),
+        OpenApiParameter(name='date', description='date filter', type=datetime),
+        OpenApiParameter(name='drawType', description='drawType filter', type=int),
+        OpenApiParameter(name='status', description='status filter', type=int)
     ])
     def list(self, request):
         queryset = self.queryset
         company_id = self.request.query_params.get('companyId', None)
+        draw_date = self.request.query_params.get('date', None)
+        draw_typeId = self.request.query_params.get('drawType', None)
+        status_id = self.request.query_params.get('status', None)
         include_is_deleted = request.query_params.get('includeIsDeleted', 'true').lower() == 'true'
 
         if company_id:
@@ -31,6 +37,15 @@ class GameScheduleViewSet(BaseViewSet):
                 queryset = queryset.filter(companyGame__companyId__exact=company_id)
             except ValueError:
                 return JsonResponse({"error": "Invalid UUID format for companyId"}, status=status.HTTP_400_BAD_REQUEST)
+            
+        if draw_date:
+            queryset = queryset.filter(date__exact=draw_date)
+
+        if draw_typeId:
+            queryset = queryset.filter(gameDrawType__exact=draw_typeId)
+
+        if status_id:
+            queryset = queryset.filter(status__exact=status_id)
 
         if not include_is_deleted:
             queryset = queryset.filter(isDeleted=False)
