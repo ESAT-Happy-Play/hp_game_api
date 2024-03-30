@@ -8,6 +8,8 @@ from rest_framework import status
 from django.shortcuts import get_object_or_404
 from django.http import HttpRequest
 from dotenv import load_dotenv
+from drf_spectacular.utils import extend_schema, OpenApiParameter
+from rest_framework.decorators import action
 import os
 import requests
 
@@ -18,6 +20,15 @@ class DrawResultViewSet(BaseViewSet):
     queryset = DrawResult.objects.filter(isDeleted=False)
     serializer_class = DrawResultSerializer
 
+    @action(detail=False, methods=['get'], url_path='schedule/(?P<gameScheduleId>[^/.]+)')
+    def draw_result_get_by_schedule(self, request, gameScheduleId=None):
+        queryset = self.queryset
+        if gameScheduleId:
+            queryset = queryset.filter(gameSchedule__exact=gameScheduleId)
+
+        serializer = DrawResultSerializer(queryset, many=True)
+        return JsonResponse(serializer.data[0] if serializer.data else {}, status=status.HTTP_200_OK)
+        
     @extend_schema(request=DrawResultCreateSerializer)
     def create(self, request):
         
