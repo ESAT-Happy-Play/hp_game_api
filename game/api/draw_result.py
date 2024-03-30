@@ -20,14 +20,20 @@ class DrawResultViewSet(BaseViewSet):
     queryset = DrawResult.objects.filter(isDeleted=False)
     serializer_class = DrawResultSerializer
 
-    @action(detail=False, methods=['get'], url_path='schedule/(?P<gameScheduleId>[^/.]+)')
+    @extend_schema(parameters=[
+        OpenApiParameter(name='gameScheduleId', description='Game Schedule ID', type=int, location=OpenApiParameter.PATH, required=True),
+    ],
+    operation_id='draw_result_get_by_schedule')
+    @action(detail=False, methods=['get'], url_path='(?P<gameScheduleId>[^/.]+)/game-schedule')
     def draw_result_get_by_schedule(self, request, gameScheduleId=None):
-        queryset = self.queryset
-        if gameScheduleId:
-            queryset = queryset.filter(gameSchedule__exact=gameScheduleId)
+        prize_pool_result = self.queryset.filter(gameSchedule__exact=gameScheduleId).first()
 
-        serializer = DrawResultSerializer(queryset, many=True)
-        return JsonResponse(serializer.data[0] if serializer.data else {}, status=status.HTTP_200_OK)
+        if prize_pool_result is None:
+            return JsonResponse({'detail': 'No Draw result found for the specified game schedule ID.'}, status=status.HTTP_404_NOT_FOUND)
+        
+        serializer = self.serializer_class(prize_pool_result)
+
+        return JsonResponse(serializer.data, status=status.HTTP_200_OK)
         
     @extend_schema(request=DrawResultCreateSerializer)
     def create(self, request):

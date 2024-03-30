@@ -27,3 +27,17 @@ class PrizePoolViewSet(BaseViewSet):
 
         serializer = self.serializer_class(latest_prize_pool)
         return JsonResponse(serializer.data, status=status.HTTP_200_OK)
+    
+    @extend_schema(parameters=[
+        OpenApiParameter(name='gameScheduleId', description='Game Schedule ID', type=int, location=OpenApiParameter.PATH, required=True),
+    ],
+    operation_id='get_prize_pool_by_game_schedule')
+    @action(detail=False, methods=['get'], url_path='(?P<gameScheduleId>[^/.]+)/game-schedule')
+    def get_prize_pool_by_game_schedule(self, request, gameScheduleId):
+        latest_prize_pool = self.queryset.filter(gameSchedule__exact=gameScheduleId, isDeleted=False).first()
+
+        if latest_prize_pool is None:
+            return JsonResponse({'detail': 'No prize pool found for the specified game schedule ID.'}, status=status.HTTP_404_NOT_FOUND)
+
+        serializer = self.serializer_class(latest_prize_pool)
+        return JsonResponse(serializer.data, status=status.HTTP_200_OK)
