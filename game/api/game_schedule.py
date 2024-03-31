@@ -21,7 +21,8 @@ class GameScheduleViewSet(BaseViewSet):
         OpenApiParameter(name='includeIsDeleted', description='isDeleted filter', type=bool),
         OpenApiParameter(name='date', description='date filter', type=datetime),
         OpenApiParameter(name='drawType', description='drawType filter', type=int),
-        OpenApiParameter(name='status', description='status filter', type=int)
+        OpenApiParameter(name='status', description='status filter', type=int),
+        OpenApiParameter(name='gameScheduleIds', description='comma separated gameScheduleIds', type=str)
     ])
     def list(self, request):
         queryset = self.queryset
@@ -29,6 +30,7 @@ class GameScheduleViewSet(BaseViewSet):
         draw_date = self.request.query_params.get('date', None)
         draw_typeId = self.request.query_params.get('drawType', None)
         status_id = self.request.query_params.get('status', None)
+        game_schedule_ids = self.request.query_params.get('gameScheduleIds', None)
         include_is_deleted = request.query_params.get('includeIsDeleted', 'true').lower() == 'true'
 
         if company_id:
@@ -46,6 +48,9 @@ class GameScheduleViewSet(BaseViewSet):
 
         if status_id:
             queryset = queryset.filter(status__exact=status_id)
+
+        if game_schedule_ids:
+            queryset = queryset.filter(id__in=game_schedule_ids.split(','))
 
         if not include_is_deleted:
             queryset = queryset.filter(isDeleted=False)
