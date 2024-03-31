@@ -27,7 +27,7 @@ class BetTransactionCreateSerializer(BetTransactionSerializer):
 class BetTransactionPageListSerializer(BetTransactionSerializer):
     class Meta:
         model = BetTransaction
-        fields = ('betItems', 'totalAmount','dateOfTransaction','accountId','betType','transactionNumber', 'numberOfBets')
+        fields = ('id', 'betItems', 'totalAmount','dateOfTransaction','accountId','betType','transactionNumber', 'numberOfBets')
 
 class TransactionPaginationSerializer(serializers.Serializer):
     size = serializers.IntegerField()
