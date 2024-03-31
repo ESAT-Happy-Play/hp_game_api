@@ -35,3 +35,4 @@ class TransactionPaginationSerializer(serializers.Serializer):
     start_date = serializers.DateField(required=False)
     end_date = serializers.DateField(required=False)
     accountId = serializers.IntegerField(required=False)
+    betType = serializers.IntegerField(required=False)
