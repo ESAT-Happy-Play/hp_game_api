@@ -26,14 +26,31 @@ class DrawResultViewSet(BaseViewSet):
     operation_id='draw_result_get_by_schedule')
     @action(detail=False, methods=['get'], url_path='(?P<gameScheduleId>[^/.]+)/game-schedule')
     def draw_result_get_by_schedule(self, request, gameScheduleId=None):
-        prize_pool_result = self.queryset.filter(gameSchedule__exact=gameScheduleId).first()
+        draw_result = self.queryset.filter(gameSchedule__exact=gameScheduleId).first()
 
-        if prize_pool_result is None:
+        if draw_result is None:
             return JsonResponse({'detail': 'No Draw result found for the specified game schedule ID.'}, status=status.HTTP_404_NOT_FOUND)
         
-        serializer = self.serializer_class(prize_pool_result)
+        serializer = self.serializer_class(draw_result)
 
         return JsonResponse(serializer.data, status=status.HTTP_200_OK)
+    
+    
+    @extend_schema(parameters=[
+        OpenApiParameter(name='gameScheduleIds', description='Game Schedule ID', type=str, location=OpenApiParameter.PATH, required=True),
+    ],
+    operation_id='draw_result_get_by_schedule_list')
+    @action(detail=False, methods=['get'], url_path='game-schedule/list')
+    def draw_result_get_by_schedule_list(self, request):
+        draw_result_query = self.queryset
+        
+        if 'gameScheduleIds' in request.query_params:
+            draw_result_query = draw_result_query.filter(gameSchedule__in=request.query_params.get('gameScheduleIds').split(','))
+
+        serializer = self.serializer_class(draw_result_query, many=True)
+
+        return JsonResponse(serializer.data, status=status.HTTP_200_OK, safe=False)
+        
         
     @extend_schema(request=DrawResultCreateSerializer)
     def create(self, request):
