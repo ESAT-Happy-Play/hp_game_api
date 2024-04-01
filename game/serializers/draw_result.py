@@ -3,6 +3,7 @@ from game.models import DrawResult
 from .draw_result_winner import DrawResultWinnerSerializer
 
 class DrawResultSerializer(serializers.ModelSerializer):
+    winners = DrawResultWinnerSerializer(read_only=True, many=True, source='drawResultWinner')
     class Meta:
         model = DrawResult
         fields = '__all__'
