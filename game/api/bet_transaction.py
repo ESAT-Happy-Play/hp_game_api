@@ -9,6 +9,7 @@ from django.http import JsonResponse
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.decorators import action
+from drf_spectacular.utils import extend_schema, OpenApiParameter
 
 class BetTransactionViewSet(BaseViewSet):
     queryset = BetTransaction.objects.filter(isDeleted=False).prefetch_related('betItems').all()
@@ -32,15 +33,14 @@ class BetTransactionViewSet(BaseViewSet):
         bet_transaction = get_object_or_404(self.queryset, pk=pk)
         schedules = BetItem.objects.filter(betTransaction=bet_transaction, isDeleted=False)
         schedules_serializer = BetItemSerializer(schedules, many=True)
-        return JsonResponse(schedules_serializer.data, status=status.HTTP_200_OK, safe=False)
-    
+        return JsonResponse(schedules_serializer.data, status=status.HTTP_200_OK, safe=False)  
 
     @extend_schema(request=TransactionPaginationSerializer, responses=TransactionPaginationSerializer)
     @action(detail=False, methods=['post'], url_path='list')
     def paginated_list(self,request):
         size = request.data.get('size')
         start = request.data.get('start')
-        filters = {}
+        filters = {}    
         if 'start_date' in request.data:
             filters['dateOfTransaction__gte'] = request.data.get('start_date')
             
@@ -66,3 +66,17 @@ class BetTransactionViewSet(BaseViewSet):
         paginated_data = {"size":start+size, "offset": page_offset, "total":total, "data":[]}
         paginated_data['data']=serializer.data
         return Response(data=paginated_data, status=status.HTTP_200_OK)
+    
+    @extend_schema(parameters=[OpenApiParameter(name='account_Id', description='account Id filter', type=str, location=OpenApiParameter.PATH, required=True)], operation_id='get_account_bettransactions')
+    @action(detail=False, methods=["get"], url_path="(?P<account_Id>[^/.]+)/account")
+    def get_account_bettransactions(self, request, account_Id=None):
+        queryset = BetTransaction.objects.filter(isDeleted=False, accountId__exact=account_Id)
+        
+        betTransaction_count = queryset.count()
+        last_transaction = queryset.last()
+        
+        if betTransaction_count is 0:
+            return JsonResponse({'count': 0, 'betTransaction': {}}, status=status.HTTP_200_OK)
+
+        serializer = BetTransactionSerializer(last_transaction)
+        return JsonResponse({ 'count': betTransaction_count, 'betTransaction': serializer.data }, status=status.HTTP_200_OK, safe=False)
