@@ -1,6 +1,6 @@
-from game.serializers import DrawResultSerializer, DrawResultCreateSerializer, GameScheduleSerializer
+from game.serializers import DrawResultSerializer, DrawResultCreateSerializer, GameScheduleSerializer, DrawResultListSerializer
 from .draw_result_winner import DrawResultWinnerViewSet
-from game.models import DrawResult, BetItem, PrizePool, GameSchedule, CompanyGame
+from game.models import DrawResult, BetItem, PrizePool, GameSchedule, CompanyGame, WinStreak
 from drf_spectacular.utils import extend_schema
 from .base_viewset import BaseViewSet
 from django.http import JsonResponse
@@ -20,6 +20,18 @@ class DrawResultViewSet(BaseViewSet):
     queryset = DrawResult.objects.filter(isDeleted=False)
     serializer_class = DrawResultSerializer
 
+
+    @extend_schema(parameters=[OpenApiParameter(name='includeIsDeleted', description='isDeleted filter', type=bool)])
+    def list(self, request):
+        include_is_deleted = request.query_params.get('includeIsDeleted', 'true').lower() == 'true'
+        queryset = self.queryset.prefetch_related('drawResultWinner').all()
+
+        if not include_is_deleted:
+            queryset = self.queryset.filter(isDeleted=False)
+
+        serializer = DrawResultListSerializer(queryset, many=True)
+        return JsonResponse(serializer.data, status=status.HTTP_200_OK, safe=False)
+
     @extend_schema(parameters=[
         OpenApiParameter(name='gameScheduleId', description='Game Schedule ID', type=int, location=OpenApiParameter.PATH, required=True),
     ],
@@ -37,25 +49,46 @@ class DrawResultViewSet(BaseViewSet):
         
     @extend_schema(request=DrawResultCreateSerializer)
     def create(self, request):
-        
-        #searching winners
         winner_view = DrawResultWinnerViewSet()
         game_schedule = get_object_or_404(GameSchedule, pk=request.data['gameSchedule'], isDeleted=False)
         company_game = get_object_or_404(CompanyGame, pk=game_schedule.companyGame.id, isDeleted=False)
+        prize_calculation = company_game.gameSettings["prizeCalculation"]
 
         #finding of winners
         bets = BetItem.objects.filter(isDeleted=False, gameSchedule=game_schedule).all()
         winner_list = bets.filter(value=request.data['result']).all()
 
-        if company_game.gameSettings['prizeCalculation']['enableQuasi'] == True:
+        #finding quasi winners
+        if prize_calculation['enableQuasi'] == True:
             result_digits = sorted(request.data['result'].split('-'))
             
             quasi_winners = [bet for bet in bets.exclude(value=request.data['result']) if bet.bet_list() == result_digits]
         else:
           quasi_winners = []
+        
+        #prize_calculation
+        win_amount = 0
+        isPool = False
+        if 'consecutiveWins' in prize_calculation:
+            streak = WinStreak.objects.filter(userId=quasi_winner.betTransaction.accountId).first()
+            if streak == prize_calculation['winningMultiplier']:
+                prizepool = PrizePool.objects.filter(gameSchedule=game_schedule).first()
+                win_amount = prizepool.winningPrize
+                isPool = True
+
+        else:
+            if 'winningMultiplier' in prize_calculation:
+                win_amount = sum([winners.amount for winners in winner_list]) * prize_calculation['winningMultiplier']['winPerBet']
+
+            elif 'pooling' in prize_calculation:
+                prizepool = PrizePool.objects.filter(gameSchedule=game_schedule).first()
+                win_amount = prizepool.winningPrize
+                isPool = True
+
 
         request.data['noOfWinners'] = len(winner_list)
         request.data['noOfQuasiWinners'] = len(quasi_winners)
+        request.data['amount'] = win_amount
 
 
         serializer = self.serializer_class(data=request.data)
@@ -65,20 +98,20 @@ class DrawResultViewSet(BaseViewSet):
 
         #creation of winner entities
         for winner in winner_list:
-            win_amount=0
-            if 'winningMult' in company_game.gameSettings["prizeCalculation"]:
-                win_amount=winner.amount*company_game.gameSettings["winningMult"]
+            winnings = 0
+
+            if isPool:
+                winnings = win_amount/len(winner_list)
 
             else:
-                prize_pool = get_object_or_404(PrizePool, gameSchedule=game_schedule, isDeleted=False)
-                win_amount = prize_pool.winningPrize/len(winner_list)
-            
+                winnings = winner.amount * prize_calculation['winningMultiplier']['winPerBet']
+
             new_request = HttpRequest()
             new_request.data = {
                 "drawResult":serializer.data['id'],
                 "accountInfoId":winner.betTransaction.accountId,
                 "betInfo":winner.id,
-                "amount":win_amount,
+                "amount":winnings,
                 "isQuasi": False
             }
             winner_view.create(new_request)
@@ -89,7 +122,7 @@ class DrawResultViewSet(BaseViewSet):
             quasi_request.data = {
                 "drawResult":serializer.data['id'],
                 "accountInfoId":quasi_winner.betTransaction.accountId,
-                "betInfo":quasi_winner.id,
+            "betInfo":quasi_winner.id,
                 "amount":quasi_winner.amount,
                 "isQuasi": True
             }

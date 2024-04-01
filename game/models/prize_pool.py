@@ -6,7 +6,7 @@ class PrizePool(models.Model):
     """Model definition for PrizePool."""
 
     companyId = models.UUIDField()
-    gameSchedule = models.ForeignKey(GameSchedule, verbose_name=("GameSchedule"), on_delete=models.CASCADE)
+    gameSchedule = models.OneToOneField(GameSchedule, verbose_name=("GameSchedule"), on_delete=models.CASCADE)
     companyGame = models.ForeignKey(CompanyGame, verbose_name=("CompanyGame"), on_delete=models.CASCADE)
     winningPrize = models.FloatField()
     totalBets = models.IntegerField()
