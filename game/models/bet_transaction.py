@@ -6,7 +6,7 @@ class BetTransaction(models.Model):
   """Model definition for CloseDate."""
 
   totalAmount = models.FloatField()
-  dateOfTransaction = models.DateField()
+  dateOfTransaction = models.DateTimeField()
   accountId = models.BigIntegerField()
   numberOfBets = models.IntegerField()
   betType = models.IntegerField()
