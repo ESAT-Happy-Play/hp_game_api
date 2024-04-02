@@ -4,7 +4,7 @@ from game.models.company_game import CompanyGame
 class WinStreak(models.Model):
     """Model definition for WinStreak."""
 
-    userId = models.UUIDField()
+    accountId = models.BigIntegerField()
     streak = models.IntegerField()
     companyGame = models.ForeignKey(CompanyGame, verbose_name=("CompanyGame"), on_delete=models.CASCADE)
     

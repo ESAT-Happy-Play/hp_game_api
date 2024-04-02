@@ -87,8 +87,9 @@ class DrawResultViewSet(BaseViewSet):
         win_amount = 0
         isPool = False
         if 'consecutiveWins' in prize_calculation:
-            streak = WinStreak.objects.filter(userId__in=[winners.betTransaction.accountId for winners in winner_list]).all()
-            if [match for match in streak if match == prize_calculation['consecutiveWins']]:
+            streak = WinStreak.objects.filter(accountId__in=[winners.betTransaction.accountId for winners in winner_list]).all()
+            print(streak)
+            if [match for match in streak if match.streak == prize_calculation['consecutiveWins']]:
                 prizepool = PrizePool.objects.filter(gameSchedule=game_schedule).first()
                 win_amount = prizepool.winningPrize
                 isPool = True
