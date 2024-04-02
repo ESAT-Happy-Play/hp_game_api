@@ -1,10 +1,11 @@
-from game.serializers import PrizePoolSerializer, PrizePoolCreateSerializer
+from game.serializers import PrizePoolSerializer, PrizePoolCreateSerializer, PrizePoolStateUpdateSerializer
 from game.models import PrizePool
 from .base_viewset import BaseViewSet
 from drf_spectacular.utils import extend_schema, OpenApiParameter
 from rest_framework.decorators import action
 from django.http import JsonResponse
 from rest_framework import status
+from django.shortcuts import get_object_or_404
 
 class PrizePoolViewSet(BaseViewSet):
     queryset = PrizePool.objects.filter(isDeleted=False)
@@ -41,3 +42,13 @@ class PrizePoolViewSet(BaseViewSet):
 
         serializer = self.serializer_class(latest_prize_pool)
         return JsonResponse(serializer.data, status=status.HTTP_200_OK)
+    
+    
+    @extend_schema(request=PrizePoolStateUpdateSerializer)
+    @action(detail=True, methods=['patch'], url_path="update-drawn")
+    def update_winners_and_drawn(self, request, pk=None):
+        instance = get_object_or_404(self.queryset, pk=pk)
+        serializer = self.serializer_class(instance, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return JsonResponse(serializer.data)

@@ -13,6 +13,8 @@ class PrizePool(models.Model):
     totalBetsAmount = models.IntegerField()
     cardPrice = models.IntegerField()
     specialDraw = models.BooleanField(default=False)
+    hasWinner = models.BooleanField(default=False)
+    hasDrawn = models.BooleanField(default=False)
     isDeleted = models.BooleanField(default=False)
     
     def __str__(self):
