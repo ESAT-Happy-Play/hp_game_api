@@ -87,30 +87,36 @@ class DrawResultViewSet(BaseViewSet):
         win_amount = 0
         isPool = False
         if 'consecutiveWins' in prize_calculation:
-            streak = WinStreak.objects.filter(userId=quasi_winner.betTransaction.accountId).first()
-            if streak == prize_calculation['winningMultiplier']:
+            streak = WinStreak.objects.filter(accountId__in=[winners.betTransaction.accountId for winners in winner_list]).all()
+            print(streak)
+            if [match for match in streak if match.streak == prize_calculation['consecutiveWins']]:
                 prizepool = PrizePool.objects.filter(gameSchedule=game_schedule).first()
                 win_amount = prizepool.winningPrize
                 isPool = True
+
+            else:
+                win_amount = (sum([winners.amount for winners in winner_list]) * prize_calculation['winningMultiplier']['winPerBet'])
 
         else:
             if 'winningMultiplier' in prize_calculation:
-                win_amount = sum([winners.amount for winners in winner_list]) * prize_calculation['winningMultiplier']['winPerBet']
+                win_amount = (sum([winners.amount for winners in winner_list]) * prize_calculation['winningMultiplier']['winPerBet'])
 
             elif 'pooling' in prize_calculation:
                 prizepool = PrizePool.objects.filter(gameSchedule=game_schedule).first()
-                win_amount = prizepool.winningPrize
+                win_amount = win_amount + prizepool.winningPrize
                 isPool = True
+
 
 
         request.data['noOfWinners'] = len(winner_list)
         request.data['noOfQuasiWinners'] = len(quasi_winners)
-        request.data['amount'] = win_amount
+        request.data['amount'] = win_amount + sum([item.amount for item in quasi_winners])
 
 
         serializer = self.serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
+
 
 
         #creation of winner entities

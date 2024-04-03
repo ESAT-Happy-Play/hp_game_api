@@ -11,3 +11,9 @@ class PrizePoolCreateSerializer(PrizePoolSerializer):
   class Meta:
     model = PrizePool
     exclude = ('isDeleted',)
+
+    
+class PrizePoolStateUpdateSerializer(PrizePoolSerializer):
+  class Meta:
+    model = PrizePool
+    fields = ['hasWinner', 'hasDrawn']
