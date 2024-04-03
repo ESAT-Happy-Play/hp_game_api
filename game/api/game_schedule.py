@@ -95,8 +95,12 @@ class GameScheduleViewSet(BaseViewSet):
         game_schedule = get_object_or_404(self.active_queryset, pk=pk)
         bet_items = BetItem.objects.filter(gameSchedule=game_schedule, isDeleted=False)
         total_amount = bet_items.aggregate(Sum('amount'))['amount__sum'] or 0
+        total_bet_count = bet_items.count()
 
-        data = {'total_bet_amount': total_amount}
+        data = {
+            'total_bet_amount': total_amount,
+            'total_bet_count': total_bet_count
+        }
         return JsonResponse(data, status=status.HTTP_200_OK)
 
     @extend_schema(parameters=[
