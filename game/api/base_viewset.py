@@ -13,7 +13,7 @@ class BaseViewSet(viewsets.ViewSet):
     queryset = ()
     serializer_class = ()
     # To implement: JWT auth from the core identity service
-    # permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated]
 
 
     @extend_schema(parameters=[OpenApiParameter(name='includeIsDeleted', description='isDeleted filter', type=bool)])
