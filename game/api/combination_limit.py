@@ -1,4 +1,4 @@
-from game.serializers import CombinationLimitSerializer
+from game.serializers import CombinationLimitSerializer, CurrentCombinationCheckSerializer
 from game.models import CombinationLimit, CompanyGame, BetItem
 from .base_viewset import BaseViewSet
 from drf_spectacular.utils import extend_schema
@@ -20,6 +20,9 @@ class CombinationLimitViewSet(BaseViewSet):
         serializer.save()
         return JsonResponse(serializer.data, status=status.HTTP_200_OK)
 
+
+
+    @extend_schema(request=CurrentCombinationCheckSerializer)
     @action(detail=False, methods=['post'], url_path='current-limit')
     def check_current_limit(self, request):
         combinations = request.data['combinations']
@@ -35,17 +38,15 @@ class CombinationLimitViewSet(BaseViewSet):
             list_of_limits_dict[limit.combination] = limit.limit
 
         for combination in  combination_sums:
-            combination_sums_dict[combination['value']] = combination['total_amount']
+            combination_sums_dict[combination['value']] = combination['combinationBet']
 
         total_amount = sum([combination['total_amount'] for combination in combination_sums])
 
         response_combination = [
             {
             "combination": combination,
-            "combinationLimit": list_of_limits_dict.get(combination, 1000000),
-            "combinationBet": combination_sums_dict.get(combination, 0)
-            # "combinationLimit": list_of_limits_dict[combination],
-            # "combinationBet": combination_sums_dict[combination]
+            "combinationLimit": list_of_limits_dict.get(combination, None),
+            "combinationBet": combination_sums_dict.get(combination, 0) if list_of_limits_dict.get(combination, None) else None
             } for combination in combinations]
 
         response_body = {
