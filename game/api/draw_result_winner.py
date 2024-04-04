@@ -31,7 +31,7 @@ class DrawResultWinnerViewSet(BaseViewSet):
 
         return JsonResponse(serializer.data, status=status.HTTP_200_OK)
 
-    @action(detail=False, methods=['get'], url_path='unprocessedCredit')
+    @action(detail=False, methods=['get'], url_path='unprocessed-credit')
     def get_unprocessed_credit_winners(self, request):
         winners = self.queryset.filter(isCreditProcessed=False)
         serializer = self.serializer_class(winners, many=True)
