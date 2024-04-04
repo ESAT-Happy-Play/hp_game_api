@@ -7,10 +7,24 @@ from rest_framework import status
 from django.shortcuts import get_object_or_404
 from rest_framework.decorators import action
 from django.db.models import Sum, Count
+from drf_spectacular.utils import extend_schema, OpenApiParameter
+import uuid
 
 class CombinationLimitViewSet(BaseViewSet):
     queryset = CombinationLimit.objects.all()
     serializer_class = CombinationLimitSerializer
+    
+    @extend_schema(parameters=[OpenApiParameter(name='companyId', description='CompanyId from core service', type=str, location=OpenApiParameter.PATH, required=True)], operation_id='get_combination_limit')
+    @action(detail=False, methods=["get"], url_path="(?P<companyId>[^/.]+)/list")
+    def get_combination_limit(self, request, companyId=None):
+        try:
+            company_id = uuid.UUID(companyId)
+            queryset = self.queryset.filter(companyId__exact=company_id)
+        except ValueError:
+            return JsonResponse({"error": "Invalid UUID format for companyId"}, status=status.HTTP_400_BAD_REQUEST)
+
+        serializer = CombinationLimitSerializer(queryset, many=True)
+        return JsonResponse(serializer.data, status=status.HTTP_200_OK, safe=False)
 
     @extend_schema(request=CombinationLimitSerializer)
     def update(self, request, pk=None):
