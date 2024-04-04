@@ -10,3 +10,8 @@ class DrawResultWinnerCreateSerializer(DrawResultWinnerSerializer):
     class Meta:
         model = DrawResultWinner
         exclude = ('isDeleted',)
+
+class DrawResultWinnerUpdateSerializer(DrawResultWinnerSerializer):
+    class Meta:
+        model = DrawResultWinner
+        fields = ('isCreditProcessed',)

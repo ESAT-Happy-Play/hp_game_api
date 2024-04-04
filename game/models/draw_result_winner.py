@@ -10,6 +10,7 @@ class DrawResultWinner(models.Model):
     amount = models.FloatField()
     betInfo = models.ForeignKey(BetItem, related_name='drawResultWinner', on_delete=models.CASCADE)
     isQuasi = models.BooleanField(default=False)
+    isCreditProcessed = models.BooleanField(default=False)
     isDeleted = models.BooleanField(default=False)
     
     def __str__(self):
