@@ -1,4 +1,4 @@
-from game.serializers import CombinationLimitSerializer, CurrentCombinationCheckSerializer
+from game.serializers import CombinationLimitSerializer, CurrentCombinationCheckSerializer, CombinationLimitListPaginationSerializer, CombinationLimitGameSchedBetsSerializer
 from game.models import CombinationLimit, CompanyGame, BetItem
 from .base_viewset import BaseViewSet
 from drf_spectacular.utils import extend_schema
@@ -69,4 +69,70 @@ class CombinationLimitViewSet(BaseViewSet):
             "combinations": response_combination
         }
         
+        return JsonResponse(response_body, status=status.HTTP_200_OK)
+
+    @extend_schema(request=CombinationLimitListPaginationSerializer)
+    @action(detail=False, methods=['post'], url_path='list')
+    def get_paginated_combination_limit(self, request):
+        company_game_id = request.data.get('companyGameId')
+        start = 0
+        size = 20
+
+        if 'start' in request.data:
+            start = request.data.get('start')
+
+        if 'size' in request.data:
+            size = request.data.get('size')
+
+        if 'combinations' in request.data:
+            combinations = request.data.get('combination')
+
+        if combinations:
+            new_queryset = self.queryset.filter(companyGame=company_game_id, combination__in=combinations)
+        else:
+            new_queryset = self.queryset.filter(companyGame=company_game_id)
+
+        total = new_queryset.count()
+        data = new_queryset[start:start+size]
+        serializer = self.serializer_class(data, many=True)
+
+        page_offset = (start+size) + 1
+
+        if page_offset >= total:
+            page_offset = 0
+
+        response_body = {
+            "count": start + size,
+            "offset": page_offset,
+            "totalCount": total,
+            "combinations": serializer.data
+        }
+
+        return JsonResponse(response_body, status=status.HTTP_200_OK)
+
+    @extend_schema(request=CombinationLimitGameSchedBetsSerializer)
+    @action(detail=False, methods=['post'], url_path='gameschedule-bets')
+    def get_total_bet_per_schedule(self, request):
+        game_schedule_id = request.data.get('gameScheduleId')
+        combinations = request.data.get('combinations', None)
+
+        bets = BetItem.objects.filter(gameSchedule=game_schedule_id)
+        if combinations:
+            bets = bets.filter(value__in=combinations)
+
+        combination_sums = bets.values('value').annotate(totalAmountBet=Sum('amount')).all()
+
+        combination_bets = [
+            {
+                'combination': combination['value'],
+                'totalAmountBet': combination['totalAmountBet'],
+            }
+            for combination in combination_sums
+        ]
+
+        response_body = {
+            "gameScheduleId": game_schedule_id,
+            "combinationBets": combination_bets
+        }
+
         return JsonResponse(response_body, status=status.HTTP_200_OK)
