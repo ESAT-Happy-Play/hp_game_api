@@ -16,3 +16,7 @@ class CombinationLimitListPaginationSerializer(serializers.Serializer):
     combinations = serializers.ListField(child=serializers.CharField(max_length=20), required=False, default=[])
     size = serializers.IntegerField(required=False, default=20)
     start = serializers.IntegerField(required=False, default=0)
+
+class CombinationLimitGameSchedBetsSerializer(serializers.Serializer):
+    gameScheduleId = serializers.IntegerField(required=True)
+    combinations = serializers.ListField(child=serializers.CharField(max_length=20), required=False, default=[])
