@@ -41,9 +41,10 @@ class CombinationLimitViewSet(BaseViewSet):
     def check_current_limit(self, request):
         combinations = request.data['combinations']
         company_game =  get_object_or_404(CompanyGame, pk=request.data['companyGameId'])
+        gameScheduleId = request.data['gameScheduleId']
 
         list_of_limits = CombinationLimit.objects.filter(companyGame=company_game, combination__in=combinations).all()
-        list_of_combinations = BetItem.objects.filter(companyGame=company_game, value__in=combinations)
+        list_of_combinations = BetItem.objects.filter(companyGame=company_game, value__in=combinations, gameSchedule=gameScheduleId)
         combination_sums = list_of_combinations.values('value').annotate(total_amount=Sum('amount'), combinationBet=Count('value')).all()
 
         list_of_limits_dict = {}
