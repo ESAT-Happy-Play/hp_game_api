@@ -101,7 +101,7 @@ class CombinationLimitViewSet(BaseViewSet):
         data = new_queryset[start:start+size]
         serializer = self.serializer_class(data, many=True)
 
-        page_offset = (start+size) + 1
+        page_offset = (start+size)
 
         if page_offset >= total:
             page_offset = 0
