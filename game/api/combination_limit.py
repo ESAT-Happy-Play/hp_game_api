@@ -52,7 +52,7 @@ class CombinationLimitViewSet(BaseViewSet):
             list_of_limits_dict[limit.combination] = limit.limit
 
         for combination in  combination_sums:
-            combination_sums_dict[combination['value']] = combination['combinationBet']
+            combination_sums_dict[combination['value']] = combination['total_amount']
 
         total_amount = sum([combination['total_amount'] for combination in combination_sums])
 
@@ -60,7 +60,8 @@ class CombinationLimitViewSet(BaseViewSet):
             {
             "combination": combination,
             "combinationLimit": list_of_limits_dict.get(combination, None),
-            "combinationBet": combination_sums_dict.get(combination, 0) if list_of_limits_dict.get(combination, None) else None
+            "combinationBet": combination_sums_dict.get(combination, 0),
+            "hasCombinationLimit": list_of_limits_dict.get(combination, 0) > 0 if list_of_limits_dict.get(combination, False) else False
             } for combination in combinations]
 
         response_body = {
@@ -77,7 +78,7 @@ class CombinationLimitViewSet(BaseViewSet):
         company_game_id = request.data.get('companyGameId')
         start = 0
         size = 20
-
+            
         if 'start' in request.data:
             start = request.data.get('start')
 
