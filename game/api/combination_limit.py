@@ -44,8 +44,11 @@ class CombinationLimitViewSet(BaseViewSet):
         gameScheduleId = request.data['gameScheduleId']
 
         list_of_limits = CombinationLimit.objects.filter(companyGame=company_game, combination__in=combinations).all()
-        list_of_combinations = BetItem.objects.filter(companyGame=company_game, value__in=combinations, gameSchedule=gameScheduleId)
+        limit_query = BetItem.objects.filter(companyGame=company_game, gameSchedule=gameScheduleId)
+        
+        list_of_combinations = limit_query.filter(value__in=combinations)
         combination_sums = list_of_combinations.values('value').annotate(total_amount=Sum('amount'), combinationBet=Count('value')).all()
+        bet_Amounts = limit_query.values('value').annotate(total_amount=Sum('amount')).all()
 
         list_of_limits_dict = {}
         combination_sums_dict = {}
@@ -55,7 +58,7 @@ class CombinationLimitViewSet(BaseViewSet):
         for combination in  combination_sums:
             combination_sums_dict[combination['value']] = combination['total_amount']
 
-        total_amount = sum([combination['total_amount'] for combination in combination_sums])
+        total_amount = sum([betAmount['total_amount'] for betAmount in bet_Amounts])
 
         response_combination = [
             {
