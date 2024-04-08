@@ -1,4 +1,4 @@
-from game.serializers import DrawResultSerializer, DrawResultCreateSerializer, GameScheduleSerializer, DrawResultListSerializer
+from game.serializers import DrawResultSerializer, DrawResultCreateSerializer, GameScheduleSerializer, DrawResultListSerializer, DrawResultListPaginationSerializer
 from .draw_result_winner import DrawResultWinnerViewSet
 from game.models import DrawResult, BetItem, PrizePool, GameSchedule, CompanyGame, WinStreak
 from drf_spectacular.utils import extend_schema
@@ -166,3 +166,52 @@ class DrawResultViewSet(BaseViewSet):
 
 
         return JsonResponse(serializer.data, status=status.HTTP_201_CREATED)
+
+    @extend_schema(request=DrawResultListPaginationSerializer)
+    @action(detail=False, methods=['post'], url_path='list')
+    def get_paginated_draw_result_list(self, request):
+        company_id = request.data.get('companyId', None)
+        start_date = request.data.get('start_date', None)
+        end_date = request.data.get('end_date', None)
+        start = request.data.get('start', 0)
+        size = request.data.get('size', 10)
+
+        draw_results = self.queryset
+
+        if company_id:
+            draw_results = draw_results.filter(companyId=company_id)
+
+        if start_date:
+            draw_results = draw_results.filter(gameSchedule__date__gte=start_date)
+
+        if end_date:
+            draw_results = draw_results.filter(gameSchedule__date__lte=end_date)
+
+        draw_results = draw_results.order_by('-gameSchedule__date')  # order by date in descending order
+
+        total = draw_results.count()
+        data = draw_results[start:start + size]
+
+        response_data = [
+            {
+                'id': item.id,
+                'result': item.result,
+                'amount': item.amount,
+                'noOfWinners': item.noOfWinners,
+                'companyGame': item.companyGame_id,
+                'gameSchedule': item.gameSchedule_id,
+                'drawDate': item.gameSchedule.date,
+                'drawTime': item.gameSchedule.drawTime,
+                'noOfBets': BetItem.objects.filter(isDeleted=False, gameSchedule=item.gameSchedule).count()
+            }
+            for item in data
+        ]
+
+        response_body = {
+            "count": start + size,
+            "offset":  start + size if start + size < total else 0,
+            "totalCount": total,
+            "data": response_data
+        }
+
+        return JsonResponse(response_body, status=status.HTTP_200_OK)
