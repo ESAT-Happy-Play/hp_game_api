@@ -11,3 +11,4 @@ from .bet_transaction import *
 from .combination_limit import *
 from .win_streak import *
 from .game_settings import *
+from .magic_result import *
