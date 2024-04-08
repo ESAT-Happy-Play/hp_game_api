@@ -17,3 +17,9 @@ class BetItemTransactionCreateSerializer(BetItemSerializer):
         model = BetItem
         exclude = ('isDeleted','betTransaction','transactionDate')
 		
+class BetItemListPaginationSerializer(serializers.Serializer):
+    companyId = serializers.IntegerField(required=False)
+    start_date = serializers.DateField(required=False)
+    end_date = serializers.DateField(required=False)
+    size = serializers.IntegerField(required=False, default=20)
+    start = serializers.IntegerField(required=False, default=0)

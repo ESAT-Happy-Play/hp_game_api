@@ -1,4 +1,4 @@
-from game.serializers import BetItemSerializer, BetItemCreateSerializer
+from game.serializers import BetItemSerializer, BetItemCreateSerializer, BetItemListPaginationSerializer
 from game.models import BetItem
 from .base_viewset import BaseViewSet
 from drf_spectacular.utils import extend_schema, OpenApiParameter
@@ -37,3 +37,50 @@ class BetItemViewSet(BaseViewSet):
         serializer = self.serializer_class(instance, many=True)
 
         return JsonResponse(data=serializer.data, status=status.HTTP_200_OK, safe=False)
+
+    @extend_schema(request=BetItemListPaginationSerializer)
+    @action(detail=False, methods=['post'], url_path='paginated-list')
+    def get_paginated_bet_item_list(self, request):
+        company_id = request.data.get('companyId', None)
+        start_date = request.data.get('start_date', None)
+        end_date = request.data.get('end_date', None)
+        start = request.data.get('start', 0)
+        size = request.data.get('size', 20)
+
+        bet_items = self.queryset
+
+        if company_id:
+            bet_items = bet_items.filter(companyGame__companyId=company_id)
+
+        if start_date:
+            bet_items = bet_items.filter(betTransaction__dateOfTransaction__gte=start_date)
+
+        if end_date:
+            bet_items = bet_items.filter(betTransaction__dateOfTransaction__lte=end_date)
+
+        total = bet_items.count()
+        data = bet_items[start:start + size]
+
+        response_data = [
+            {
+                'id': item.id,
+                'value': item.value,
+                'orderItemId': item.orderItemId,
+                'amount': item.amount,
+                'dateOfTransaction': item.betTransaction.dateOfTransaction,
+                'accountId': item.betTransaction.accountId,
+                'transactionNumber': item.betTransaction.transactionNumber,
+                'drawDate': item.gameSchedule.date,
+                'drawTime': item.gameSchedule.drawTime
+            }
+            for item in data
+        ]
+
+        response_body = {
+            "count": start + size,
+            "offset":  start + size if start + size < total else 0,
+            "totalCount": total,
+            "data": response_data
+        }
+
+        return JsonResponse(response_body, status=status.HTTP_200_OK)
