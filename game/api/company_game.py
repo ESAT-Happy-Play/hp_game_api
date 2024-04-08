@@ -88,12 +88,30 @@ class CompanyGameViewSet(BaseViewSet):
         type_serializer = GameScheduleSerializer(types)
         return JsonResponse(type_serializer.data, status=status.HTTP_200_OK)
 
-
+    @extend_schema(parameters=[OpenApiParameter(
+      name='count', description='data count to return', type=int, required=False)
+      ],
+      operation_id='get_draw_backlogs')
     @action(detail=True, methods=["get"], url_path="draw/backlogs")
     def get_draw_backlogs(self, request, pk=None):
+        count = self.request.query_params.get('count', None)
         company_game = get_object_or_404(self.queryset, pk=pk)
         current_date = datetime.now().date()
-        backlogs = GameSchedule.objects.filter(companyGame=company_game, status=0, date__lte=current_date, gameDrawType__drawTime__lte=(datetime.now()-timedelta(minutes=5)), isDeleted=False)
+        backlogs = GameSchedule.objects.filter(
+          companyGame=company_game,
+          status=0,
+          date__lte=current_date,
+          gameDrawType__drawTime__lte=(datetime.now()-timedelta(minutes=5)),
+          isDeleted=False
+          ).order_by('date')
+
+        if count:
+            try:
+                count = int(count)
+                backlogs = backlogs[:count]
+            except ValueError:
+                return JsonResponse({"error": "Invalid type for parameter count"}, status=status.HTTP_400_BAD_REQUEST)
+
         backlogs_serializer = GameScheduleSerializer(backlogs, many=True)
         return JsonResponse(backlogs_serializer.data, status=status.HTTP_200_OK, safe=False)
 
