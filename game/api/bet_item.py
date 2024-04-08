@@ -58,6 +58,8 @@ class BetItemViewSet(BaseViewSet):
         if end_date:
             bet_items = bet_items.filter(betTransaction__dateOfTransaction__lte=end_date)
 
+        bet_items = bet_items.order_by('-betTransaction__dateOfTransaction')  # order by date in descending order
+
         total = bet_items.count()
         data = bet_items[start:start + size]
 

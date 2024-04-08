@@ -21,5 +21,5 @@ class BetItemListPaginationSerializer(serializers.Serializer):
     companyId = serializers.IntegerField(required=False)
     start_date = serializers.DateField(required=False)
     end_date = serializers.DateField(required=False)
-    size = serializers.IntegerField(required=False, default=20)
+    size = serializers.IntegerField(required=False, default=10)
     start = serializers.IntegerField(required=False, default=0)
