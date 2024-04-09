@@ -187,7 +187,7 @@ class MagicResultViewSet(BaseViewSet):
         if end_date:
             magic_results = magic_results.filter(gameSchedule__date__lte=end_date)
 
-        magic_results = magic_results.order_by('-gameSchedule__date')  # order by date in descending order
+        magic_results = magic_results.order_by('-gameSchedule__date', '-gameSchedule__drawTime')  # order by date in descending order, then by draw time in descending order
 
         total = magic_results.count()
         data = magic_results[start:start + size]
