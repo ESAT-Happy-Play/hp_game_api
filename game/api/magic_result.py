@@ -162,7 +162,7 @@ class MagicResultViewSet(BaseViewSet):
         }
 
         #broadcasting winners
-        requests.post(url=os.environ.get("SOCKET_SERVICE_URL")+"draw-result", json=broadcast_body_params)
+        requests.post(url=os.environ.get("SOCKET_SERVICE_URL")+"magic-result", json=broadcast_body_params)
 
 
         return JsonResponse(serializer.data, status=status.HTTP_201_CREATED)
@@ -187,7 +187,7 @@ class MagicResultViewSet(BaseViewSet):
         if end_date:
             magic_results = magic_results.filter(gameSchedule__date__lte=end_date)
 
-        magic_results = magic_results.order_by('-gameSchedule__date')  # order by date in descending order
+        magic_results = magic_results.order_by('-gameSchedule__date', '-gameSchedule__drawTime')  # order by date in descending order, then by draw time in descending order
 
         total = magic_results.count()
         data = magic_results[start:start + size]
