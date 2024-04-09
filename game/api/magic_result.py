@@ -162,7 +162,7 @@ class MagicResultViewSet(BaseViewSet):
         }
 
         #broadcasting winners
-        requests.post(url=os.environ.get("SOCKET_SERVICE_URL")+"draw-result", json=broadcast_body_params)
+        requests.post(url=os.environ.get("SOCKET_SERVICE_URL")+"magic-result", json=broadcast_body_params)
 
 
         return JsonResponse(serializer.data, status=status.HTTP_201_CREATED)
