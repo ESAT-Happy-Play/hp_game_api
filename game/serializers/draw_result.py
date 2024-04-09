@@ -22,7 +22,7 @@ class DrawResultListSerializer(serializers.ModelSerializer):
     fields = ['id', 'companyId', 'result', 'amount', 'noOfWinners', 'noOfQuasiWinners', 'companyGame', 'gameSchedule','winners']
 
 class DrawResultListPaginationSerializer(serializers.Serializer):
-    companyId = serializers.IntegerField(required=False)
+    companyGameId = serializers.IntegerField(required=False)
     start_date = serializers.DateField(required=False)
     end_date = serializers.DateField(required=False)
     size = serializers.IntegerField(required=False, default=10)

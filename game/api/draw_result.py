@@ -170,7 +170,7 @@ class DrawResultViewSet(BaseViewSet):
     @extend_schema(request=DrawResultListPaginationSerializer)
     @action(detail=False, methods=['post'], url_path='list')
     def get_paginated_draw_result_list(self, request):
-        company_id = request.data.get('companyId', None)
+        companygameId = request.data.get('companyGameId', None)
         start_date = request.data.get('start_date', None)
         end_date = request.data.get('end_date', None)
         start = request.data.get('start', 0)
@@ -178,8 +178,8 @@ class DrawResultViewSet(BaseViewSet):
 
         draw_results = self.queryset
 
-        if company_id:
-            draw_results = draw_results.filter(companyId=company_id)
+        if companygameId:
+            draw_results = draw_results.filter(companyGame=companygameId)
 
         if start_date:
             draw_results = draw_results.filter(gameSchedule__date__gte=start_date)
