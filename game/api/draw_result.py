@@ -112,6 +112,9 @@ class DrawResultViewSet(BaseViewSet):
         request.data['noOfQuasiWinners'] = len(quasi_winners)
         request.data['amount'] = win_amount + sum([item.amount for item in quasi_winners])
 
+        # changing game schedule status to drawn
+        game_schedule.status = 1
+        game_schedule.save()
 
         serializer = self.serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
