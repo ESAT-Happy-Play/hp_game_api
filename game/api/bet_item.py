@@ -41,7 +41,7 @@ class BetItemViewSet(BaseViewSet):
     @extend_schema(request=BetItemListPaginationSerializer)
     @action(detail=False, methods=['post'], url_path='paginated-list')
     def get_paginated_bet_item_list(self, request):
-        company_id = request.data.get('companyId', None)
+        companyGame_id = request.data.get('companyGameId', None)
         start_date = request.data.get('start_date', None)
         end_date = request.data.get('end_date', None)
         start = request.data.get('start', 0)
@@ -49,8 +49,8 @@ class BetItemViewSet(BaseViewSet):
 
         bet_items = self.queryset
 
-        if company_id:
-            bet_items = bet_items.filter(companyGame__companyId=company_id)
+        if companyGame_id:
+            bet_items = bet_items.filter(companyGame=companyGame_id)
 
         if start_date:
             bet_items = bet_items.filter(betTransaction__dateOfTransaction__gte=start_date)
