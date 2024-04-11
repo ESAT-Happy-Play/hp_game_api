@@ -72,6 +72,7 @@ class BetItemViewSet(BaseViewSet):
                 'dateOfTransaction': item.betTransaction.dateOfTransaction,
                 'accountId': item.betTransaction.accountId,
                 'transactionNumber': item.betTransaction.transactionNumber,
+                'betTransactionId': item.betTransaction.id,
                 'drawDate': item.gameSchedule.date,
                 'drawTime': item.gameSchedule.drawTime
             }
