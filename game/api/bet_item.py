@@ -33,7 +33,7 @@ class BetItemViewSet(BaseViewSet):
         if 'companyGame' in request.query_params:
             filters['companyGame'] = request.query_params.get('companyGame')
             
-        instance = self.queryset.select_related('betTransaction').filter(**filters)
+        instance = self.queryset.select_related('betTransaction').filter(**filters).order_by('-transactionDate')
         serializer = self.serializer_class(instance, many=True)
 
         return JsonResponse(data=serializer.data, status=status.HTTP_200_OK, safe=False)
