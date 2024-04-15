@@ -18,8 +18,9 @@ class BetItemViewSet(BaseViewSet):
     
     @extend_schema(parameters=[
         OpenApiParameter(name='idList', description='add one or more id/s (commaseparated)', type=str),
-        OpenApiParameter(name='accountId', description='add accountId', type=str),
+        OpenApiParameter(name='accountId', description='add accountId', type=str),      
         OpenApiParameter(name='companyGame', description='filter by companyGame', type=str),
+        OpenApiParameter(name='gameScheduleId', description='filter by gameScheduleId', type=str),
     ])
     @action(detail=False, methods=["get"], url_path="list")
     def get_list(self, request, pk=None):
@@ -32,6 +33,9 @@ class BetItemViewSet(BaseViewSet):
             
         if 'companyGame' in request.query_params:
             filters['companyGame'] = request.query_params.get('companyGame')
+            
+        if 'gameScheduleId' in request.query_params:
+            filters['gameScheduleId'] = request.query_params.get('gameScheduleId')
             
         instance = self.queryset.select_related('betTransaction').filter(**filters).order_by('-transactionDate')
         serializer = self.serializer_class(instance, many=True)
