@@ -20,7 +20,7 @@ class BetItemViewSet(BaseViewSet):
         OpenApiParameter(name='idList', description='add one or more id/s (commaseparated)', type=str),
         OpenApiParameter(name='accountId', description='add accountId', type=str),
         OpenApiParameter(name='companyGame', description='filter by companyGame', type=str),
-        OpenApiParameter(name='gameScheduleId', description='filter by gameScheduleId', type=str),
+        OpenApiParameter(name='gameScheduleId', description='filter by gameScheduleId (commaseparated)', type=str),
     ])
     @action(detail=False, methods=["get"], url_path="list")
     def get_list(self, request, pk=None):
@@ -35,12 +35,13 @@ class BetItemViewSet(BaseViewSet):
             filters['companyGame'] = request.query_params.get('companyGame')
             
         if 'gameScheduleId' in request.query_params:
-            filters['gameScheduleId'] = request.query_params.get('gameScheduleId')
+            filters['gameSchedule__in'] = request.query_params.get('gameScheduleId').split(',')
             
         instance = self.queryset.select_related('betTransaction').filter(**filters)
         serializer = self.serializer_class(instance, many=True)
 
         return JsonResponse(data=serializer.data, status=status.HTTP_200_OK, safe=False)
+
 
     @extend_schema(request=BetItemListPaginationSerializer)
     @action(detail=False, methods=['post'], url_path='paginated-list')
