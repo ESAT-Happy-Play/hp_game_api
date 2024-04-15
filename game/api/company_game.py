@@ -103,7 +103,7 @@ class CompanyGameViewSet(BaseViewSet):
           date__lte=current_date,
           gameDrawType__drawTime__lte=(datetime.now()-timedelta(minutes=5)),
           isDeleted=False
-          ).order_by('date')
+          ).order_by('date', 'drawTime')
 
         if count:
             try:

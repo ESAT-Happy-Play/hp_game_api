@@ -53,7 +53,7 @@ class BetTransactionViewSet(BaseViewSet):
         if 'betType' in request.data and request.data.get('betType') is not None:
             filters['betType'] = request.data.get('betType')
 
-        new_queryset = self.queryset.filter(**filters).order_by('-dateOfTransaction')
+        new_queryset = self.queryset.filter(**filters).order_by('-id')
                 
         total = new_queryset.count()
         data = new_queryset[start:start+size]
