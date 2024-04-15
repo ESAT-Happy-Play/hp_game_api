@@ -59,6 +59,7 @@ class DrawResultViewSet(BaseViewSet):
         if 'gameScheduleIds' in request.query_params:
             draw_result_query = draw_result_query.filter(gameSchedule__in=request.query_params.get('gameScheduleIds').split(','))
 
+        draw_result_query = draw_result_query.order_by('-gameSchedule__date', '-gameSchedule__drawTime')
         serializer = self.serializer_class(draw_result_query, many=True)
 
         return JsonResponse(serializer.data, status=status.HTTP_200_OK, safe=False)
@@ -189,8 +190,10 @@ class DrawResultViewSet(BaseViewSet):
 
         if end_date:
             draw_results = draw_results.filter(gameSchedule__date__lte=end_date)
-
-        draw_results = draw_results.order_by('-gameSchedule__date', '-gameSchedule__drawTime')  # order by date in descending order, then by draw time in descending order
+            
+        draw_results = draw_results.order_by('-gameSchedule__date', '-gameSchedule__drawTime')
+        
+        # order by date in descending order, then by draw time in descending order
 
         total = draw_results.count()
         data = draw_results[start:start + size]

@@ -1,5 +1,6 @@
 from game.serializers import DrawResultWinnerSerializer, DrawResultWinnerCreateSerializer, DrawResultWinnerUpdateSerializer
 from game.models import DrawResultWinner, DrawResult, CompanyGame, Game
+from game.serializers.draw_result_winner import DrawResultWinnerPaginationSerializer
 from .base_viewset import BaseViewSet
 from drf_spectacular.utils import extend_schema
 from rest_framework.decorators import action
@@ -59,3 +60,52 @@ class DrawResultWinnerViewSet(BaseViewSet):
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return JsonResponse(serializer.data)
+
+    @extend_schema(request=DrawResultWinnerPaginationSerializer)
+    @action(detail=False, methods=['post'], url_path='list')
+    def get_paginated_draw_result_winner(self, request):
+        companygameId = request.data.get('companyGameId', None)
+        start_date = request.data.get('start_date', None)
+        end_date = request.data.get('end_date', None)
+        start = request.data.get('start', 0)
+        size = request.data.get('size', 10)
+
+        draw_results = self.queryset
+
+        if companygameId:
+            draw_results = draw_results.filter(drawResult__companyGame=companygameId)
+
+        if start_date:
+            draw_results = draw_results.filter(drawResult__gameSchedule__date__gte=start_date)
+
+        if end_date:
+            draw_results = draw_results.filter(drawResult__gameSchedule__date__lte=end_date)
+
+        draw_results = draw_results.order_by('-drawResult__gameSchedule__date', '-drawResult__gameSchedule__drawTime')  # order by date in descending order, then by draw time in descending order
+
+        total = draw_results.count()
+        data = draw_results[start:start + size]
+
+        response_data = [
+            {
+                'id': item.id,
+                'result': item.drawResult.result,
+                'amount': item.amount,
+                'companyGame': item.drawResult.companyGame.id,
+                'gameSchedule': item.drawResult.gameSchedule.id,
+                'drawDate': item.drawResult.gameSchedule.date,
+                'drawTime': item.drawResult.gameSchedule.drawTime,
+                'accountId': item.accountInfoId,
+                'drawResult': item.drawResult.id
+            }
+            for item in data
+        ]
+
+        response_body = {
+            "count": start + size,
+            "offset":  start + size if start + size < total else 0,
+            "totalCount": total,
+            "data": response_data
+        }
+
+        return JsonResponse(response_body, status=status.HTTP_200_OK)
